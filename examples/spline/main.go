@@ -24,6 +24,7 @@ func (self *MyView) Update(t, dt float64) {
     // clear
     FillRect( self.screenImage , self.screenImage.Bounds(), color.Black )
 
+    spline_path.Update(dt)
     spline_path.Draw( self.screenImage )
 }
 
