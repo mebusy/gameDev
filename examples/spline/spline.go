@@ -27,8 +27,12 @@ type Spline struct {
 }
 
 func (self *Spline) Draw( dst *image.RGBA ) {
-    for _, pt := range self.points {
-        pt.Draw( dst, color.White )
+    for i, pt := range self.points {
+        if i == nSelectedPoint {
+            pt.Draw( dst, COLOR_YELLOW )
+        } else {
+            pt.Draw( dst, color.White )
+        }
     }
 }
 
@@ -41,5 +45,12 @@ func init() {
 
 }
 
+func switchControlPoint() {
+    nSelectedPoint = (nSelectedPoint+1)% len(spline_path.points)
+}
 
+
+var (
+    COLOR_YELLOW = color.RGBA{ 255,255,0,255 }
+)
 
