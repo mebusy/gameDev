@@ -1,11 +1,14 @@
 package main
 
 import (
-    "image"
-    "image/color"
-    "github.com/go-gl/glfw/v3.1/glfw"
-    "github.com/mebusy/simpleui"
-    // "log"
+	"image"
+	"image/color"
+	"math"
+
+	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/mebusy/simpleui"
+	"github.com/mebusy/simpleui/graph"
+	"log"
 )
 
 type Point2D struct {
@@ -90,10 +93,15 @@ func (self *Spline) Draw( dst *image.RGBA ) {
     // draw agent
     p1 := self.getSplinePoint( fMarker, true )
     s1 := self.getSplineSlope( fMarker, true )
+    r := math.Atan2( float64(-s1.y), float64(s1.x) )
+    nLen := 5.0
+    graph.DrawLine(dst,
+        nLen*math.Sin(r)+float64(p1.x), nLen*math.Cos(r)+float64(p1.y),
+        -nLen*math.Sin(r)+float64(p1.x), -nLen*math.Cos(r)+float64(p1.y),
+        graph.COLOR_BLUE)
 
-    _ = p1
-    _ = s1
-
+    log.Println( nLen*math.Sin(r)+float64(p1.x), p1.x , -nLen*math.Sin(r)+float64(p1.x) )
+    log.Println( nLen*math.Cos(r)+float64(p1.y) , -nLen*math.Cos(r)+float64(p1.y)  )
 }
 
 
