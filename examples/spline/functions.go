@@ -1,7 +1,7 @@
 package main
 
 func (self *Spline) getSplinePoint( t float32, bLoop bool ) Point2D {
-    // index of points
+    // index of ctl_points
     var p0,p1,p2,p3 int
     if !bLoop {
         p1 = int(t) + 1
@@ -10,19 +10,19 @@ func (self *Spline) getSplinePoint( t float32, bLoop bool ) Point2D {
         p0 = p1 - 1
     } else {
         p1 = int(t)
-        p2 = (p1 + 1) % len( self.points )
-        p3 = (p2 + 1) % len( self.points )
+        p2 = (p1 + 1) % len( self.ctl_points )
+        p3 = (p2 + 1) % len( self.ctl_points )
         if p1 >= 1 {
             p0 = p1 -1
         } else {
-            p0 = len( self.points )-1
+            p0 = len( self.ctl_points )-1
         }
     }
     pt_indices := []int {
         p0,p1,p2,p3,
     }
 
-    // when the number of control points > 4
+    // when the number of control ctl_points > 4
     // t will be > 1
     t = t - float32(int(t))
 
@@ -39,8 +39,8 @@ func (self *Spline) getSplinePoint( t float32, bLoop bool ) Point2D {
 
     var tx, ty float32
     for i:=0; i<len(pt_indices); i++ {
-        tx += self.points[ pt_indices[i] ].x * pt_values[i]
-        ty += self.points[ pt_indices[i] ].y * pt_values[i]
+        tx += self.ctl_points[ pt_indices[i] ].x * pt_values[i]
+        ty += self.ctl_points[ pt_indices[i] ].y * pt_values[i]
     }
     tx *= 0.5
     ty *= 0.5
@@ -48,7 +48,7 @@ func (self *Spline) getSplinePoint( t float32, bLoop bool ) Point2D {
 }
 
 func (self *Spline) getSplineSlope( t float32, bLoop bool ) Point2D {
-    // index of points
+    // index of ctl_points
     var p0,p1,p2,p3 int
     if !bLoop {
         p1 = int(t) + 1
@@ -57,19 +57,19 @@ func (self *Spline) getSplineSlope( t float32, bLoop bool ) Point2D {
         p0 = p1 - 1
     } else {
         p1 = int(t)
-        p2 = (p1 + 1) % len( self.points )
-        p3 = (p2 + 1) % len( self.points )
+        p2 = (p1 + 1) % len( self.ctl_points )
+        p3 = (p2 + 1) % len( self.ctl_points )
         if p1 >= 1 {
             p0 = p1 -1
         } else {
-            p0 = len( self.points )-1
+            p0 = len( self.ctl_points )-1
         }
     }
     pt_indices := []int {
         p0,p1,p2,p3,
     }
 
-    // when the number of control points > 4
+    // when the number of control ctl_points > 4
     // t will be > 1
     t = t - float32(int(t))
 
@@ -85,11 +85,44 @@ func (self *Spline) getSplineSlope( t float32, bLoop bool ) Point2D {
 
     var tx, ty float32
     for i:=0; i<len(pt_indices); i++ {
-        tx += self.points[ pt_indices[i] ].x * pt_values[i]
-        ty += self.points[ pt_indices[i] ].y * pt_values[i]
+        tx += self.ctl_points[ pt_indices[i] ].x * pt_values[i]
+        ty += self.ctl_points[ pt_indices[i] ].y * pt_values[i]
     }
     tx *= 0.5
     ty *= 0.5
     return Point2D{tx,ty}
+}
+
+// this is a naive solution
+func (self *Spline) CalculateSegmentLength(node int , bLoop bool) float32 {
+    var fLength float32 = 0.0
+    var fStepSize float32 = 0.005
+
+    // var old_pt, new_pt Point2D
+    old_pt := self.getSplinePoint( float32(node), bLoop )
+
+    var t float32
+    for t=0; t<1; t+= fStepSize {
+        new_pt := self.getSplinePoint( float32(node)+t, bLoop )
+        fLength += old_pt.DistanceTo( new_pt)
+        old_pt = new_pt
+    }
+
+    return fLength
+}
+
+// convert a real path distance to a normalized distance
+//  e.g.  total length 136,  GetNormalizedOffset(90) => 6.8
+// postion p: from the real world
+//     it will be some positon along the real length of the spline
+func (self *Spline) GetNormalizedOffset( p float32 ) float32 {
+    // work out which node is the base.
+    i := 0
+    for p > self.ctl_pt_lengths[i] {
+        p -= self.ctl_pt_lengths[i]
+        i++
+    }
+    // the fractional is the offset
+    return float32(i) + p/self.ctl_pt_lengths[i]
 }
 

@@ -1,5 +1,6 @@
 
-# Splines
+# Splines 
+
 
 [wiki splines](https://en.wikipedia.org/wiki/Spline_(mathematics)  The wiki is too mathematical...
 
@@ -149,6 +150,15 @@ func (self *Spline) getSplinePoint( t float32, bLoop bool ) Point2D {
 - It's often be useful to know the slope at any point. 
     - just modify the getSplinePoint function, take derivative on the influence function.
 
+- ![](imgs/spline_curved_loop_4.png)
+
+- so far, as I move my agent around we can see its speed varies.
+    - this is because it assumes that the distance between all of the points is the same, 0 to 1.
+
+- How to solve it ?
+    - we need calculate the length of the spline segment.
+    - ![](imgs/spline_curved_loop_5.png)
+    - calcualtion is expensive. if you dynamically change your splines **control points** then you've got to recalculate quite a lot of stuff. 
 
 
 

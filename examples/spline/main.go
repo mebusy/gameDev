@@ -29,7 +29,6 @@ func (self *MyView) Update(t, dt float64) {
     spline_path.Draw( self.screenImage )
 }
 
-func (self *MyView) SetGLWindow(window *glfw.Window) {}
 func (self *MyView) SetAudioDevice(audio *simpleui.Audio) {}
 func (self *MyView) OnKey(key glfw.Key) {
     switch key {
@@ -46,7 +45,7 @@ func (self *MyView) Title() string {
 
 
 func main() {
-    w,h,scale := 128,80,4
+    w,h,scale := 128,80,8
     view := NewView(w,h)
     simpleui.SetWindow( w,h, scale  )
     simpleui.Run( view )

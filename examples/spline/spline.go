@@ -11,6 +11,27 @@ import (
 	// "log"
 )
 
+
+var spline_path Spline
+var nSelectedPoint int
+var fMarker float32
+
+func init() {
+    nPoint := 10
+    spline_path.ctl_points = make( []Point2D, nPoint )
+    spline_path.ctl_pt_lengths = make( []float32, nPoint )
+    var cx, cy float32 =  50, 40
+    for i:=0; i<nPoint; i++ {
+        // pt := Point2D{ float32(10+i*10), 41  }
+        pt := Point2D{ 
+            cx+ float32(30*math.Sin(float64(i)/float64(nPoint)*2*math.Pi )),
+            cy+ float32(30*math.Cos(float64(i)/float64(nPoint)*2*math.Pi )) }
+        spline_path.ctl_points[i] = pt
+    }
+}
+
+// ===================================
+
 type Point2D struct {
     x,y float32
 }
@@ -45,54 +66,66 @@ func (self *Point2D) Update( dt float64 ) {
     if simpleui.ReadKey(window, glfw.KeyDown) {
         self.y += distance
     }
-
-
 }
 
+func (self *Point2D) DistanceTo( pt Point2D ) float32 {
+    dx := (self.x - pt.x)
+    dy := (self.y - pt.y)
+    return float32(math.Sqrt( float64(dx*dx + dy*dy) ))
+}
+
+// ===================================
+
 type Spline struct {
-    points []Point2D
+    ctl_points []Point2D
+    ctl_pt_lengths []float32
+    totalSplineLength float32
 }
 
 
 
 func (self *Spline) Update( dt float64 ) {
-    self.points[nSelectedPoint].Update(dt)
+    self.ctl_points[nSelectedPoint].Update(dt)
 
     // update agent
     window := simpleui.GetWindow()
     if simpleui.ReadKey(window, glfw.KeyA) {
-        fMarker -= float32(5 * dt)
+        fMarker -= float32(20 * dt)
     }
     if simpleui.ReadKey(window, glfw.KeyD) {
-        fMarker += float32(5 * dt)
+        fMarker += float32(20 * dt)
     }
 
-    if fMarker >= float32( len(self.points) ) {
-        fMarker -= float32( len(self.points) )
+    if fMarker >= self.totalSplineLength {
+        fMarker -= self.totalSplineLength
     }
     if fMarker < 0 {
-        fMarker += float32( len(self.points) )
+        fMarker += self.totalSplineLength
     }
 }
 
 func (self *Spline) Draw( dst *image.RGBA ) {
     // draw curve
     var t float32
-    for t=0.0; t<float32(len(self.points)); t+= 0.01 {
+    for t=0.0; t<float32(len(self.ctl_points)); t+= 0.01 {
         pt := self.getSplinePoint(t, true)
         pt.Draw( dst, color.White, 1 )
     }
     // Draw control point
-    for i, pt := range self.points {
+    self.totalSplineLength = 0
+    for i, pt := range self.ctl_points {
+        self.ctl_pt_lengths[i] = self.CalculateSegmentLength( i, true )
+        self.totalSplineLength += self.ctl_pt_lengths[i]
         if i == nSelectedPoint {
-            pt.Draw( dst, COLOR_YELLOW, 3 )
+            pt.Draw( dst, graph.COLOR_YELLOW, 3 )
         } else {
-            pt.Draw( dst, COLOR_RED, 3 )
+            pt.Draw( dst, graph.COLOR_RED, 3 )
         }
     }
     // draw agent
-    p1 := self.getSplinePoint( fMarker, true )
-    s1 := self.getSplineSlope( fMarker, true )
+    offset := self.GetNormalizedOffset( fMarker )
+    p1 := self.getSplinePoint( offset, true )
+    s1 := self.getSplineSlope( offset, true )
     // orthogonal 
     r := math.Atan2( float64(-s1.x), float64(s1.y) )
     nLen := 5.0
@@ -104,24 +137,9 @@ func (self *Spline) Draw( dst *image.RGBA ) {
 }
 
 
-var spline_path Spline
-var nSelectedPoint int
-var fMarker float32
-
-func init() {
-    spline_path.points = make( []Point2D, 0 )
-    for i:=0; i<10; i++ {
-        pt := Point2D{ float32(10+i*10), 41  }
-        spline_path.points = append( spline_path.points , pt )
-    }
-}
 
 func switchControlPoint() {
-    nSelectedPoint = (nSelectedPoint+1)% len(spline_path.points)
+    nSelectedPoint = (nSelectedPoint+1)% len(spline_path.ctl_points)
 }
 
-var (
-    COLOR_YELLOW = color.RGBA{ 255,255,0,255 }
-    COLOR_RED = color.RGBA{ 255,0,0,255 }
-)
 
