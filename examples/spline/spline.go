@@ -8,7 +8,7 @@ import (
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/mebusy/simpleui"
 	"github.com/mebusy/simpleui/graph"
-	"log"
+	// "log"
 )
 
 type Point2D struct {
@@ -100,8 +100,6 @@ func (self *Spline) Draw( dst *image.RGBA ) {
         -nLen*math.Sin(r)+float64(p1.x), -nLen*math.Cos(r)+float64(p1.y),
         graph.COLOR_BLUE)
 
-    log.Println( nLen*math.Sin(r)+float64(p1.x), p1.x , -nLen*math.Sin(r)+float64(p1.x) )
-    log.Println( nLen*math.Cos(r)+float64(p1.y) , -nLen*math.Cos(r)+float64(p1.y)  )
 }
 
 
