@@ -8,3 +8,7 @@ github.com/mebusy/simpleui v0.0.0-20200602074042-b670c946efec h1:XdIrBOfBu9ttNo+
 github.com/mebusy/simpleui v0.0.0-20200602074042-b670c946efec/go.mod h1:EeATxbAsqjxpj5gUtPTkNmD/Di0VmXbIaWm36eHYYes=
 github.com/mebusy/simpleui v0.0.0-20200602111217-750c6375eb79 h1:S+fgNrOePQ4RGF+dGCEqfvmeUXjaug9PQbLYJIafr1w=
 github.com/mebusy/simpleui v0.0.0-20200602111217-750c6375eb79/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200602112445-a900eb076e3b h1:U7ZtCZVfWVAP3Gvz/MSg/B8Rv+QyJaFYRkEaGxCNAiM=
+github.com/mebusy/simpleui v0.0.0-20200602112445-a900eb076e3b/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200603110833-367094b3be53 h1:I0g2dBgwadrpSK2VJYOnoPYB4Q/KwYefoI2Swh17ppE=
+github.com/mebusy/simpleui v0.0.0-20200603110833-367094b3be53/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=

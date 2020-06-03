@@ -5,7 +5,8 @@ import (
     "github.com/go-gl/glfw/v3.1/glfw"
     "image"
     "image/color"
-    "image/draw"
+    // "image/draw"
+    "github.com/mebusy/simpleui/graph"
 )
 
 type MyView struct {
@@ -22,7 +23,7 @@ func (self *MyView) Enter() {}
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
     // clear
-    FillRect( self.screenImage , self.screenImage.Bounds(), color.Black )
+    graph.FillRect( self.screenImage , self.screenImage.Bounds(), color.Black )
 
     spline_path.Update(dt)
     spline_path.Draw( self.screenImage )
@@ -52,6 +53,3 @@ func main() {
 }
 
 
-func FillRect( dst *image.RGBA  , r image.Rectangle , c color.Color ) {
-    draw.Draw( dst, r, &image.Uniform{c}, image.ZP, draw.Src  )
-}
