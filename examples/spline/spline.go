@@ -93,11 +93,12 @@ func (self *Spline) Draw( dst *image.RGBA ) {
     // draw agent
     p1 := self.getSplinePoint( fMarker, true )
     s1 := self.getSplineSlope( fMarker, true )
-    r := math.Atan2( float64(-s1.y), float64(s1.x) )
+    // orthogonal 
+    r := math.Atan2( float64(-s1.x), float64(s1.y) )
     nLen := 5.0
     graph.DrawLine(dst,
-        nLen*math.Sin(r)+float64(p1.x), nLen*math.Cos(r)+float64(p1.y),
-        -nLen*math.Sin(r)+float64(p1.x), -nLen*math.Cos(r)+float64(p1.y),
+        nLen*math.Cos(r)+float64(p1.x), nLen*math.Sin(r)+float64(p1.y),
+        -nLen*math.Cos(r)+float64(p1.x), -nLen*math.Sin(r)+float64(p1.y),
         graph.COLOR_BLUE)
 
 }
