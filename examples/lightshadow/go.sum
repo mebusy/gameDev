@@ -6,3 +6,5 @@ github.com/gordonklaus/portaudio v0.0.0-20180817120803-00e7307ccd93 h1:TSG+DyZBn
 github.com/gordonklaus/portaudio v0.0.0-20180817120803-00e7307ccd93/go.mod h1:HfYnZi/ARQKG0dwH5HNDmPCHdLiFiBf+SI7DbhW7et4=
 github.com/mebusy/simpleui v0.0.0-20200603143032-79527e3d7ee3 h1:7XO8+/ep4vJs0xtlgW40rVr95kL/rOzEwhAPu09qlOk=
 github.com/mebusy/simpleui v0.0.0-20200603143032-79527e3d7ee3/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200604100003-64c4faff1bf7 h1:ieEILI/TUqixFeb1LvczU4rROeD4uwploDhbjkMwPeM=
+github.com/mebusy/simpleui v0.0.0-20200604100003-64c4faff1bf7/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
