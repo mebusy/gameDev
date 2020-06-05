@@ -10,7 +10,7 @@ import (
 	"github.com/mebusy/simpleui/graph"
 	// "image/draw"
     "shadowcast"
-    "log"
+    // "log"
 )
 
 type MyView struct {
@@ -24,20 +24,38 @@ func NewView( w,h int) *MyView {
 }
 
 func (self *MyView) Enter() {
+    window := simpleui.GetWindow()
+    window.SetMouseButtonCallback( func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
+
+            if action == glfw.Press && button == glfw.MouseButtonLeft {
+                mx,my := simpleui.GetCursorPosInWindow(window)
+                idx_cell := int(my)/CELL_WIDTH * nWorldWidth  +  int(mx)/CELL_WIDTH
+                world[idx_cell].Exist = !world[idx_cell].Exist
+                // re-generate poly map
+                shadowcast.ConvertTileMap2PolyMap( world[:] , 0,0,nWorldWidth, nWorldHeight, CELL_WIDTH, nWorldWidth  )
+            }
+        },
+    )
 }
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
-    window := simpleui.GetWindow()
-
-    mx,my := simpleui.GetCursorPosInWindow(window)
-    if simpleui.ReadMouse( window , glfw.MouseButtonLeft ) {
-        idx_cell := int(my)/CELL_WIDTH * nWorldWidth  +  int(mx)/CELL_WIDTH
-        // log.Println( idx_cell )
-        world[idx_cell].Exist = !world[idx_cell].Exist
-    }
+    // window := simpleui.GetWindow()
 
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
                 color.Black )
+
+    for y :=0; y<nWorldHeight; y++ {
+        for x :=0; x<nWorldWidth ; x++ {
+            idx_cell := y * nWorldWidth  + x
+            if world[idx_cell].Exist {
+                bound := image.Rect( x*CELL_WIDTH, y*CELL_WIDTH, x*CELL_WIDTH+CELL_WIDTH, y*CELL_WIDTH+CELL_WIDTH )
+                graph.FillRect( self.screenImage, bound ,  graph.COLOR_BLUE )
+            }
+        }
+    }
+
+
+    shadowcast.DrawEdge( self.screenImage )
 
 }
 
