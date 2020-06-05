@@ -1,6 +1,8 @@
 
 # Light Shadow
 
+## Polygon Map
+
 The shadow casting algorithm itself relies heavily on geometry and if we have to do geometry for all of the blocks every single frame, that's not efficient. 
 
 So the first stage of the algorithm is to convert our tile map of blocks into a polygon map of edges.
@@ -65,7 +67,24 @@ I start from the top left and I'm going to scan horizontally across the screen a
     - But we can assume that things don't pass through edges in our applicaiton.
 
 
+## Shadow Casting
 
+![](imgs/lightshadow_raycast_0.png)
 
+We're going to project rays from this source radially out into the scene. 
+
+![](imgs/lightshadow_raycast_1.png)
+
+We're only interested in rays that intersect with our line segments, even more so we're only interested in rays that seemed to intersect with the cornice. 
+
+For each edge in pool, I'm going to project a ray to its start and end point.
+
+![](imgs/lightshadow_raycast_2.png)
+
+When the ray intersects with the line(edge) we know the ray effectively starts turning into shadown.  Let's consider not looking at areas which are in shadow but instead which areas are in light. 
+
+The 2nd ray down  had to intersect with another on its way there. and we'll record the intersection point that is closest to the source of the ray. And we'll do that for all 4 rays cast out.
+
+![](imgs/lightshadow_raycast_3.png)
 
 
