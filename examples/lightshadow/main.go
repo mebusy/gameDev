@@ -9,6 +9,8 @@ import (
 
 	"github.com/mebusy/simpleui/graph"
 	// "image/draw"
+    "shadowcast"
+    "log"
 )
 
 type MyView struct {
@@ -21,9 +23,17 @@ func NewView( w,h int) *MyView {
     return view
 }
 
-func (self *MyView) Enter() {}
+func (self *MyView) Enter() {
+}
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
+    window := simpleui.GetWindow()
+
+    mx,my := simpleui.GetCursorPosInWindow(window)
+    if simpleui.ReadMouse( window , glfw.MouseButtonLeft ) {
+        idx_cell := int(my)/CELL_WIDTH * nWorldWidth  +  int(mx)/CELL_WIDTH
+        log.Println( idx_cell )
+    }
 
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
                 color.Black )
@@ -45,3 +55,13 @@ func main() {
     simpleui.SetWindow( w,h, scale  )
     simpleui.Run( view )
 }
+
+// ===============================================
+
+const nWorldWidth = 40
+const nWorldHeight = 30
+const CELL_WIDTH = 16
+var world [nWorldWidth * nWorldHeight]shadowcast.Cell
+
+
+
