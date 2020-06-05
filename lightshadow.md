@@ -103,6 +103,32 @@ Instead of casting one ray from the source to a vertex, we cast 3 rays. One goes
 
 ![](imgs/lightshadow_raycast_6.png)
 
- 
+
+## Visible Polygon
+
+[2D Visibility](https://www.redblobgames.com/articles/visibility/)
+
+For the vertex of the visible polygon, we need store extra 'angle', so that we can draw sensible triangles in the fan.
+
+Since we're going to iterate through our vector of edges to cast rays, this could theoretically happen in any sort of order. Which means when I come to draw these triangles later on I can't do it sensibly I effectively need to draw there points in some rotational order. 
+
+The easiest way to do that is not just to store the point on its own but take an arbitrary axix from our source point, and record the θ values of each of the points. so for each point, I'll have a ( θ,x,y ).
+
+I can then sort these points based on θ to make sure that they're in this clockwise order. 
+
+![](imgs/lightshadow_raycast_7.png)
+
+## Line Segment intersection
+
+[detect line segments intersection](https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect)
+
+For every single ray, we now need to check for intersection between the ray and all of the edges in the polygon map.
+
+The algorithm now come down to a simple line segment intersection test.
+
+![](imgs/lightshadow_line_intersect_0.png)
+
+
+
 
 
