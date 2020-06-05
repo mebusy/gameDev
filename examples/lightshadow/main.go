@@ -32,7 +32,8 @@ func (self *MyView) Update(t, dt float64) {
     mx,my := simpleui.GetCursorPosInWindow(window)
     if simpleui.ReadMouse( window , glfw.MouseButtonLeft ) {
         idx_cell := int(my)/CELL_WIDTH * nWorldWidth  +  int(mx)/CELL_WIDTH
-        log.Println( idx_cell )
+        // log.Println( idx_cell )
+        world[idx_cell].Exist = !world[idx_cell].Exist
     }
 
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
