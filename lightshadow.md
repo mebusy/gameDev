@@ -87,4 +87,22 @@ The 2nd ray down  had to intersect with another on its way there. and we'll reco
 
 ![](imgs/lightshadow_raycast_3.png)
 
+Let's do the same for all rays for the other objects too.
+
+If I add one more point, the source, what I actually constructed is a fan of triangles. And these triangles construct a polygon which covers the area that is definitely visible from the source.
+
+The problem it's a bit of a strange polygon because if I shaded in this polygon with light, we can see there's some big gaps  which are defintely visible but they've been ignored by the algorithm.
+
+![](imgs/lightshadow_raycast_4.png)
+
+What can do about these big gaps ?  There's a little hack that we can apply. 
+
+Instead of casting one ray from the source to a vertex, we cast 3 rays. One goes directly to it, and one either side displaced by a tiny fraction angle. so one will  miss the vertex, and the other will hit a line.
+
+![](imgs/lightshadow_raycast_5.png)
+
+![](imgs/lightshadow_raycast_6.png)
+
+ 
+
 
