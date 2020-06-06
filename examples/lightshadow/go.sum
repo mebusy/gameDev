@@ -12,3 +12,13 @@ github.com/mebusy/simpleui v0.0.0-20200605051634-43a9371b038e h1:MGCjm2fboyK+xfn
 github.com/mebusy/simpleui v0.0.0-20200605051634-43a9371b038e/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
 github.com/mebusy/simpleui v0.0.0-20200605053708-e2fef94e866c h1:vUNJHgsS1EG2GHbmxcqIaYCv69RwG7io39CA3R+Hpdc=
 github.com/mebusy/simpleui v0.0.0-20200605053708-e2fef94e866c/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200606065321-ee010d411e74 h1:Ja6Kxn/Soiq/uhq1eg7ph4bxyw2N5t7muNqKXIOvhvg=
+github.com/mebusy/simpleui v0.0.0-20200606065321-ee010d411e74/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200606075055-cb7ccc7965b3 h1:IJe7hsRqThv6SngoqbAy3A9fm3Fx4UtmQZYGNhvPvH4=
+github.com/mebusy/simpleui v0.0.0-20200606075055-cb7ccc7965b3/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200606080645-40f9fc8a7ca0 h1:ZIxyLm8K7oNHpRGo/caISFyvpk0YS92rq/ghcQXWs7w=
+github.com/mebusy/simpleui v0.0.0-20200606080645-40f9fc8a7ca0/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200606081208-3acb27539506 h1:yjJDVRjsuVOHZsUdgg9uHFGTrCtPjinLC1H2aI7KuyU=
+github.com/mebusy/simpleui v0.0.0-20200606081208-3acb27539506/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200606090521-6757838e81ad h1:xf8ZCcf/S+a9Z3a3MU+dHR5bZSFtTeE2XDLo+5YE7wA=
+github.com/mebusy/simpleui v0.0.0-20200606090521-6757838e81ad/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=

@@ -25,6 +25,16 @@ func NewView( w,h int) *MyView {
 
 func (self *MyView) Enter() {
     window := simpleui.GetWindow()
+    // add world boundary
+    for i:=0; i< nWorldWidth; i++ {
+        world[i].Exist = true
+        world[ len(world)-1-i ].Exist = true
+    }
+    for i:=0; i< nWorldHeight; i++ {
+        world[ i*nWorldWidth ].Exist = true
+        world[ (i+1)*nWorldWidth -1 ].Exist = true
+    }
+
     window.SetMouseButtonCallback( func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
 
             if action == glfw.Press && button == glfw.MouseButtonLeft {
@@ -39,7 +49,7 @@ func (self *MyView) Enter() {
 }
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
-    // window := simpleui.GetWindow()
+    window := simpleui.GetWindow()
 
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
                 color.Black )
@@ -54,9 +64,18 @@ func (self *MyView) Update(t, dt float64) {
         }
     }
 
+    mx,my := simpleui.GetCursorPosInWindow(window)
+    if simpleui.IsMouseKeyHold( window, glfw.MouseButtonRight ) {
+        shadowcast.CalculateVisibilityPolygon( int(mx), int(my), 1000 )
+    }
 
+    // draw ploymap
     shadowcast.DrawEdge( self.screenImage )
-
+    // if drawing rays, set an offscreen texture as our target buffer
+    if simpleui.IsMouseKeyHold( window, glfw.MouseButtonRight ) {
+        // draw each triangle in fan
+        shadowcast.DrawPolygonVisible(self.screenImage, int(mx),int(my), color.White)
+    }
 }
 
 func (self *MyView) OnKey(key glfw.Key) {}

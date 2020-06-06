@@ -143,7 +143,7 @@ func DrawEdge( dst draw.Image ) {
         return
     }
     for _, e := range edgePool.pool {
-        graph.DrawLine( dst, float64(e.Sx) , float64(e.Sy), float64(e.Ex), float64(e.Ey) ,  graph.COLOR_RED  )
+        graph.DrawLine( dst, e.Sx , e.Sy, e.Ex, e.Ey ,  graph.COLOR_RED  )
     }
 }
 

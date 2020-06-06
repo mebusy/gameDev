@@ -2,19 +2,29 @@ package shadowcast
 
 import (
     "math"
+    "sort"
+    "image/draw"
+    "image/color"
+    "github.com/mebusy/simpleui/graph"
+    "log"
 )
 
 type VisibleVertex struct {
     theta float64
-    x, y float64
+    x, y int
 }
 
 type VisiblePolygonPoints struct {
     points  []VisibleVertex
 }
 
-func (self *VisiblePolygonPoints) Add( theta float64,  x,y float64 ) {
+func (self *VisiblePolygonPoints) Add( theta float64,  x,y int ) {
     self.points = append( self.points , VisibleVertex{theta,x,y } )
+}
+func (self *VisiblePolygonPoints) Reorder( ) {
+    sort.SliceStable(self.points, func(i, j int) bool {
+        return self.points[i].theta < self.points[j].theta
+    })
 }
 
 var visiblePolygonPoints VisiblePolygonPoints
@@ -69,14 +79,14 @@ func CalculateVisibilityPolygon( ox,oy int, radius float64 ) {
                 } // end for e2
 
                 if bValid {
-                    visiblePolygonPoints.Add( theta, min_px, min_py )
+                    visiblePolygonPoints.Add( min_theta, int(min_px), int(min_py) )
                 }
             } // end for j < 3
         } // end for i < 2
     } // end for e1
     // Sort perimeter points by angle from source. This will allow
     // us to draw a triangle fan.
-    
+    visiblePolygonPoints.Reorder()
 }
 
 
@@ -105,4 +115,19 @@ func get_line_intersection( p0_x,  p0_y,  p1_x,  p1_y,
     }
 
     return false, 0.0, 0.0
+}
+
+
+func DrawPolygonVisible( dst draw.Image , sx, sy int,  color color.Color ) {
+    triangle := graph.NewTriangle(0,0,0,0,0,0)
+    points := visiblePolygonPoints.points
+    nPoint := len(points)
+    log.Println( nPoint,  points )
+    for i:=0; i<nPoint-1; i++ {
+        triangle.SetVert(0, sx,sy)
+        triangle.SetVert(1, points[i].x, points[i].y)
+        idx := (i+1)
+        triangle.SetVert(2, points[idx].x, points[idx].y)
+        graph.DrawTriangle( dst, triangle, color )
+    }
 }
