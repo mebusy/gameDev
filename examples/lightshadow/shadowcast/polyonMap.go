@@ -138,7 +138,7 @@ func ConvertTileMap2PolyMap( world []Cell,  sx,sy,w,h int, blockWidth int, pitch
     } // end x
 }
 
-func DrawEdge( dst draw.Image ) {
+func DrawPolyonMap( dst draw.Image ) {
     if edgePool.pool == nil {
         return
     }

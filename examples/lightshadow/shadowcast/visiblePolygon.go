@@ -1,12 +1,13 @@
 package shadowcast
 
 import (
+    "fmt"
+    "image/color"
+    "image/draw"
     "math"
     "sort"
-    "image/draw"
-    "image/color"
     "github.com/mebusy/simpleui/graph"
-    "log"
+    // "log"
 )
 
 type VisibleVertex struct {
@@ -31,7 +32,7 @@ var visiblePolygonPoints VisiblePolygonPoints
 
 func CalculateVisibilityPolygon( ox,oy int, radius float64 ) {
     visiblePolygonPoints.points = make( []VisibleVertex,0,64 )
-
+    m_dup := make(map[string]bool)
     for _, e1 := range edgePool.pool {
         // take the start point, then the end point
         coords := []int{ e1.Sx,e1.Sy,e1.Ex,e1.Ey }
@@ -79,7 +80,11 @@ func CalculateVisibilityPolygon( ox,oy int, radius float64 ) {
                 } // end for e2
 
                 if bValid {
-                    visiblePolygonPoints.Add( min_theta, int(min_px), int(min_py) )
+                    key :=  fmt.Sprintf( "%d,%d", int(min_px), int(min_py) ) 
+                    if !m_dup[key] {
+                        visiblePolygonPoints.Add( min_theta, int(min_px), int(min_py) )
+                        m_dup[key] = true
+                    }
                 }
             } // end for j < 3
         } // end for i < 2
@@ -87,47 +92,19 @@ func CalculateVisibilityPolygon( ox,oy int, radius float64 ) {
     // Sort perimeter points by angle from source. This will allow
     // us to draw a triangle fan.
     visiblePolygonPoints.Reorder()
+    // log.Println( "nRay:" ,  len(visiblePolygonPoints.points) )
 }
-
-
-
-// https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-// Returns 1 if the lines intersect, otherwise 0. In addition, if the lines
-// intersect the intersection point may be stored in the floats i_x and i_y.
-func get_line_intersection( p0_x,  p0_y,  p1_x,  p1_y,
-     p2_x,  p2_y,  p3_x,  p3_y float64) (bool,float64,float64) {
-
-    var i_x, i_y float64
-
-    var s1_x, s1_y, s2_x, s2_y float64
-    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
-    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
-
-    var s, t float64
-    s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y)
-    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y)
-
-    if s >= 0 && s <= 1 && t >= 0 && t <= 1 {
-        // Collision detected
-        i_x = p0_x + (t * s1_x)
-        i_y = p0_y + (t * s1_y)
-        return true, i_x, i_y
-    }
-
-    return false, 0.0, 0.0
-}
-
 
 func DrawPolygonVisible( dst draw.Image , sx, sy int,  color color.Color ) {
     triangle := graph.NewTriangle(0,0,0,0,0,0)
     points := visiblePolygonPoints.points
     nPoint := len(points)
-    log.Println( nPoint,  points )
-    for i:=0; i<nPoint-1; i++ {
+    // log.Println( nPoint,  points )
+    for i:=0; i<nPoint; i++ {
         triangle.SetVert(0, sx,sy)
         triangle.SetVert(1, points[i].x, points[i].y)
-        idx := (i+1)
+        idx := (i+1) % nPoint
         triangle.SetVert(2, points[idx].x, points[idx].y)
-        graph.DrawTriangle( dst, triangle, color )
+        graph.FillTriangle( dst, triangle, color )
     }
 }

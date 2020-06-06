@@ -26,14 +26,16 @@ func NewView( w,h int) *MyView {
 func (self *MyView) Enter() {
     window := simpleui.GetWindow()
     // add world boundary
-    for i:=0; i< nWorldWidth; i++ {
-        world[i].Exist = true
-        world[ len(world)-1-i ].Exist = true
+    for i:=1; i< nWorldWidth-1; i++ {
+        world[nWorldWidth+i].Exist = true
+        world[len(world)-nWorldWidth-1-i ].Exist = true
     }
-    for i:=0; i< nWorldHeight; i++ {
-        world[ i*nWorldWidth ].Exist = true
-        world[ (i+1)*nWorldWidth -1 ].Exist = true
+    for i:=1; i< nWorldHeight-1; i++ {
+        world[ i*nWorldWidth +1 ].Exist = true
+        world[ (i+1)*nWorldWidth -2 ].Exist = true
     }
+
+    shadowcast.ConvertTileMap2PolyMap( world[:] , 0,0,nWorldWidth, nWorldHeight, CELL_WIDTH, nWorldWidth  )
 
     window.SetMouseButtonCallback( func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
 
@@ -70,7 +72,7 @@ func (self *MyView) Update(t, dt float64) {
     }
 
     // draw ploymap
-    shadowcast.DrawEdge( self.screenImage )
+    shadowcast.DrawPolyonMap( self.screenImage )
     // if drawing rays, set an offscreen texture as our target buffer
     if simpleui.IsMouseKeyHold( window, glfw.MouseButtonRight ) {
         // draw each triangle in fan
