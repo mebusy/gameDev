@@ -44,7 +44,7 @@ func (self *Point2D) SetPosition( x, y float64 ) {
 // ===================================
 
 type Spline struct {
-    ctl_points []Point2D
+    Ctl_points []Point2D
     ctl_pt_lengths []float64
     TotalSplineLength float64
     nSelectedPoint int
@@ -54,22 +54,22 @@ func NewSpline( points []Point2D  ) *Spline {
     spl := &Spline{}
 
     nPoint := len(points)
-    spl.ctl_points = make( []Point2D, nPoint )
+    spl.Ctl_points = make( []Point2D, nPoint )
     spl.ctl_pt_lengths = make( []float64, nPoint )
 
     for i:=0; i<nPoint; i++ {
-        spl.ctl_points[i] = points[i]
+        spl.Ctl_points[i] = points[i]
     }
     log.Println( "new spline", nPoint)
     return spl
 }
 
 func (self *Spline) GetSelectedPoint()  *Point2D {
-    return &self.ctl_points[self.nSelectedPoint]
+    return &self.Ctl_points[self.nSelectedPoint]
 }
 
 func (self *Spline) SelectControlPoint( mx,my float64 )  *Point2D {
-    for i,pt := range self.ctl_points {
+    for i,pt := range self.Ctl_points {
         if math.Abs( pt.X - mx ) < 5 && math.Abs( pt.Y - my ) < 5 {
             self.nSelectedPoint = i
             return &pt
@@ -79,19 +79,19 @@ func (self *Spline) SelectControlPoint( mx,my float64 )  *Point2D {
 }
 
 func (self *Spline) SwitchControlPoint() {
-    self.nSelectedPoint = (self.nSelectedPoint+1)% len(self.ctl_points)
+    self.nSelectedPoint = (self.nSelectedPoint+1)% len(self.Ctl_points)
 }
 
 func (self *Spline) Draw( dst *image.RGBA ) {
     // draw curve
     var t float64
-    for t=0.0; t<float64(len(self.ctl_points)); t+= 0.01 {
+    for t=0.0; t<float64(len(self.Ctl_points)); t+= 0.01 {
         pt := self.GetSplinePoint(t, true)
         pt.Draw( dst, color.White, 1 )
     }
     // Draw control point
     self.TotalSplineLength = 0
-    for i, pt := range self.ctl_points {
+    for i, pt := range self.Ctl_points {
         self.ctl_pt_lengths[i] = self.CalculateSegmentLength( i, true )
         self.TotalSplineLength += self.ctl_pt_lengths[i]
         if i == self.nSelectedPoint {

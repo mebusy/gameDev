@@ -46,6 +46,20 @@ func (self *MyView) Update(t, dt float64) {
         pt.SetPosition( mx/float64(scale), my/float64(scale) )
     }
 
+    // Calculate track boundary points
+    fTrackWidth := 10.0
+    for i:=0; i< len(spline_path.Ctl_points); i++ {
+        p1 := spline_path.GetSplinePoint( float64(i), true )
+        s1 := spline_path.GetSplineSlope( float64(i), true )
+        slen := math.Sqrt( s1.X*s1.X + s1.Y*s1.Y )
+
+        spline_trackleft.Ctl_points[i].X = p1.X + fTrackWidth* (-s1.Y/slen)
+        spline_trackleft.Ctl_points[i].Y = p1.Y + fTrackWidth* ( s1.X/slen)
+        spline_trackright.Ctl_points[i].X = p1.X - fTrackWidth* (-s1.Y/slen)
+        spline_trackright.Ctl_points[i].Y = p1.Y - fTrackWidth* ( s1.X/slen)
+    }
+
+
     // update agent
     if simpleui.ReadKey(window, glfw.KeyA) {
         fMarker -= 20 * dt
@@ -63,6 +77,8 @@ func (self *MyView) Update(t, dt float64) {
 
     // draw spline line
     spline_path.Draw( self.screenImage )
+    spline_trackleft.Draw( self.screenImage )
+    spline_trackright.Draw( self.screenImage )
 
     // draw agent
     offset := spline_path.GetNormalizedOffset( fMarker )
@@ -98,17 +114,27 @@ func main() {
     view := NewView(w,h)
     simpleui.SetWindow( w,h, scale  )
 
-    nPoint := 20
-    points := make( []spline.Point2D, nPoint )
-    cx, cy :=  w/2, h/2
-    for i:=0; i<nPoint; i++ {
-        // pt := Point2D{ float64(10+i*10), 41  }
-        pt := spline.Point2D{
-            X:float64(cx)+ 30*math.Sin(float64(i)/float64(nPoint)*2*math.Pi ),
-            Y:float64(cy)+ 30*math.Cos(float64(i)/float64(nPoint)*2*math.Pi ) }
-        points[i] = pt
+    for t:=0; t<3; t++ {
+        nPoint := 20
+        points := make( []spline.Point2D, nPoint )
+        cx, cy :=  w/2, h/2
+        for i:=0; i<nPoint; i++ {
+            // pt := Point2D{ float64(10+i*10), 41  }
+            pt := spline.Point2D{
+                X:float64(cx)+ 30*math.Sin(float64(i)/float64(nPoint)*2*math.Pi ),
+                Y:float64(cy)+ 30*math.Cos(float64(i)/float64(nPoint)*2*math.Pi ) }
+            points[i] = pt
+        }
+
+        switch t {
+        case 0:
+            spline_path = spline.NewSpline( points )
+        case 1:
+            spline_trackleft = spline.NewSpline( points )
+        case 2:
+            spline_trackright = spline.NewSpline( points )
+        }
     }
-    spline_path = spline.NewSpline( points )
 
 
     simpleui.Run( view )
@@ -117,3 +143,5 @@ func main() {
 
 var fMarker float64
 var spline_path *spline.Spline
+var spline_trackleft *spline.Spline
+var spline_trackright *spline.Spline
