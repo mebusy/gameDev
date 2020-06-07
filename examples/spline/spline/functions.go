@@ -1,6 +1,6 @@
-package main
+package spline
 
-func (self *Spline) getSplinePoint( t float64, bLoop bool ) Point2D {
+func (self *Spline) GetSplinePoint( t float64, bLoop bool ) Point2D {
     // index of ctl_points
     var p0,p1,p2,p3 int
     if !bLoop {
@@ -39,15 +39,15 @@ func (self *Spline) getSplinePoint( t float64, bLoop bool ) Point2D {
 
     var tx, ty float64
     for i:=0; i<len(pt_indices); i++ {
-        tx += self.ctl_points[ pt_indices[i] ].x * pt_values[i]
-        ty += self.ctl_points[ pt_indices[i] ].y * pt_values[i]
+        tx += self.ctl_points[ pt_indices[i] ].X * pt_values[i]
+        ty += self.ctl_points[ pt_indices[i] ].Y * pt_values[i]
     }
     tx *= 0.5
     ty *= 0.5
     return Point2D{tx,ty}
 }
 
-func (self *Spline) getSplineSlope( t float64, bLoop bool ) Point2D {
+func (self *Spline) GetSplineSlope( t float64, bLoop bool ) Point2D {
     // index of ctl_points
     var p0,p1,p2,p3 int
     if !bLoop {
@@ -85,8 +85,8 @@ func (self *Spline) getSplineSlope( t float64, bLoop bool ) Point2D {
 
     var tx, ty float64
     for i:=0; i<len(pt_indices); i++ {
-        tx += self.ctl_points[ pt_indices[i] ].x * pt_values[i]
-        ty += self.ctl_points[ pt_indices[i] ].y * pt_values[i]
+        tx += self.ctl_points[ pt_indices[i] ].X * pt_values[i]
+        ty += self.ctl_points[ pt_indices[i] ].Y * pt_values[i]
     }
     tx *= 0.5
     ty *= 0.5
@@ -99,11 +99,11 @@ func (self *Spline) CalculateSegmentLength(node int , bLoop bool) float64 {
     var fStepSize float64 = 0.005
 
     // var old_pt, new_pt Point2D
-    old_pt := self.getSplinePoint( float64(node), bLoop )
+    old_pt := self.GetSplinePoint( float64(node), bLoop )
 
     var t float64
     for t=0; t<1; t+= fStepSize {
-        new_pt := self.getSplinePoint( float64(node)+t, bLoop )
+        new_pt := self.GetSplinePoint( float64(node)+t, bLoop )
         fLength += old_pt.DistanceTo( new_pt)
         old_pt = new_pt
     }
