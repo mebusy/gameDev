@@ -36,6 +36,11 @@ func (self *Point2D) DistanceTo( pt Point2D ) float64 {
     return math.Sqrt( float64(dx*dx + dy*dy) )
 }
 
+func (self *Point2D) SetPosition( x, y float64 ) {
+    self.X = x
+    self.Y = y
+}
+
 // ===================================
 
 type Spline struct {
@@ -55,12 +60,22 @@ func NewSpline( points []Point2D  ) *Spline {
     for i:=0; i<nPoint; i++ {
         spl.ctl_points[i] = points[i]
     }
-    log.Println( "new spline", nPoint, spl.ctl_points )
+    log.Println( "new spline", nPoint)
     return spl
 }
 
 func (self *Spline) GetSelectedPoint()  *Point2D {
     return &self.ctl_points[self.nSelectedPoint]
+}
+
+func (self *Spline) SelectControlPoint( mx,my float64 )  *Point2D {
+    for i,pt := range self.ctl_points {
+        if math.Abs( pt.X - mx ) < 5 && math.Abs( pt.Y - my ) < 5 {
+            self.nSelectedPoint = i
+            return &pt
+        }
+    }
+    return nil
 }
 
 func (self *Spline) SwitchControlPoint() {
