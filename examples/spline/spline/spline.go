@@ -56,6 +56,7 @@ func NewSpline( points []Point2D  ) *Spline {
     nPoint := len(points)
     spl.Ctl_points = make( []Point2D, nPoint )
     spl.ctl_pt_lengths = make( []float64, nPoint )
+    spl.nSelectedPoint = -1
 
     for i:=0; i<nPoint; i++ {
         spl.Ctl_points[i] = points[i]
@@ -65,6 +66,9 @@ func NewSpline( points []Point2D  ) *Spline {
 }
 
 func (self *Spline) GetSelectedPoint()  *Point2D {
+    if self.nSelectedPoint < 0 {
+        return nil
+    }
     return &self.Ctl_points[self.nSelectedPoint]
 }
 
@@ -75,14 +79,12 @@ func (self *Spline) SelectControlPoint( mx,my float64 )  *Point2D {
             return &pt
         }
     }
+    self.nSelectedPoint = -1
     return nil
 }
 
-func (self *Spline) SwitchControlPoint() {
-    self.nSelectedPoint = (self.nSelectedPoint+1)% len(self.Ctl_points)
-}
 
-func (self *Spline) Draw( dst *image.RGBA ) {
+func (self *Spline) Draw( dst *image.RGBA, bDrawCtlPoints bool ) {
     // draw curve
     var t float64
     for t=0.0; t<float64(len(self.Ctl_points)); t+= 0.01 {
@@ -94,10 +96,13 @@ func (self *Spline) Draw( dst *image.RGBA ) {
     for i, pt := range self.Ctl_points {
         self.ctl_pt_lengths[i] = self.CalculateSegmentLength( i, true )
         self.TotalSplineLength += self.ctl_pt_lengths[i]
-        if i == self.nSelectedPoint {
-            pt.Draw( dst, graph.COLOR_YELLOW, 3 )
-        } else {
-            pt.Draw( dst, graph.COLOR_RED, 3 )
+
+        if bDrawCtlPoints {
+            if i == self.nSelectedPoint {
+                pt.Draw( dst, graph.COLOR_YELLOW, 3 )
+            } else {
+                pt.Draw( dst, graph.COLOR_RED, 3 )
+            }
         }
     }
 

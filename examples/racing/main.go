@@ -28,6 +28,8 @@ func (self *MyView) Enter() {
             if action == glfw.Press && button == glfw.MouseButtonLeft {
                 mx,my := simpleui.GetCursorPosInWindow(window)
                 spline_path.SelectControlPoint( mx/float64(scale),my/float64(scale) )
+            } else if action == glfw.Release && button == glfw.MouseButtonLeft {
+                spline_path.SelectControlPoint( -10, -10)
             }
         },
     )
@@ -40,8 +42,8 @@ func (self *MyView) Update(t, dt float64) {
     graph.FillRect( self.screenImage , self.screenImage.Bounds(), graph.COLOR_GREEN)
 
     // update control point 
-    if simpleui.IsMouseKeyHold( window, glfw.MouseButtonLeft ) {
-        pt := spline_path.GetSelectedPoint()
+    pt := spline_path.GetSelectedPoint()
+    if pt != nil &&  simpleui.IsMouseKeyHold( window, glfw.MouseButtonLeft ) {
         mx,my := simpleui.GetCursorPosInWindow(window)
         pt.SetPosition( mx/float64(scale), my/float64(scale) )
     }
@@ -76,9 +78,9 @@ func (self *MyView) Update(t, dt float64) {
     }
 
     // draw spline line
-    spline_path.Draw( self.screenImage )
-    spline_trackleft.Draw( self.screenImage )
-    spline_trackright.Draw( self.screenImage )
+    spline_path.Draw( self.screenImage, true )
+    spline_trackleft.Draw( self.screenImage, false )
+    spline_trackright.Draw( self.screenImage, false )
 
     // draw agent
     offset := spline_path.GetNormalizedOffset( fMarker )

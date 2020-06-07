@@ -21,7 +21,20 @@ func NewView( w,h int) *MyView {
     return view
 }
 
-func (self *MyView) Enter() {}
+func (self *MyView) Enter() {
+    window := simpleui.GetWindow()
+    window.SetMouseButtonCallback( func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
+
+            if action == glfw.Press && button == glfw.MouseButtonLeft {
+                mx,my := simpleui.GetCursorPosInWindow(window)
+                spline_path.SelectControlPoint( mx/float64(scale),my/float64(scale) )
+            } else if action == glfw.Release && button == glfw.MouseButtonLeft {
+                spline_path.SelectControlPoint( -10, -10)
+            }
+        },
+    )
+
+}
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
     window := simpleui.GetWindow()
@@ -29,21 +42,12 @@ func (self *MyView) Update(t, dt float64) {
     graph.FillRect( self.screenImage , self.screenImage.Bounds(), color.Black )
 
     // update control point 
-    distance := 30 * dt
-    // log.Println(dt)
     pt := spline_path.GetSelectedPoint()
-    if simpleui.ReadKey(window, glfw.KeyLeft) {
-        pt.X -= distance
+    if pt != nil &&  simpleui.IsMouseKeyHold( window, glfw.MouseButtonLeft ) {
+        mx,my := simpleui.GetCursorPosInWindow(window)
+        pt.SetPosition( mx/float64(scale), my/float64(scale) )
     }
-    if simpleui.ReadKey(window, glfw.KeyRight) {
-        pt.X += distance
-    }
-    if simpleui.ReadKey(window, glfw.KeyUp) {
-        pt.Y -= distance
-    }
-    if simpleui.ReadKey(window, glfw.KeyDown) {
-        pt.Y += distance
-    }
+
     // update agent
     if simpleui.ReadKey(window, glfw.KeyA) {
         fMarker -= 20 * dt
@@ -60,7 +64,7 @@ func (self *MyView) Update(t, dt float64) {
     }
 
     // draw spline line
-    spline_path.Draw( self.screenImage )
+    spline_path.Draw( self.screenImage, true )
 
     // draw agent
     offset := spline_path.GetNormalizedOffset( fMarker )
@@ -77,10 +81,6 @@ func (self *MyView) Update(t, dt float64) {
 
 func (self *MyView) SetAudioDevice(audio *simpleui.Audio) {}
 func (self *MyView) OnKey(key glfw.Key) {
-    switch key {
-    case glfw.KeyX:
-        spline_path.SwitchControlPoint()
-    }
 }
 func (self *MyView) TextureBuff() []uint8 {
     return self.screenImage.Pix
@@ -89,7 +89,7 @@ func (self *MyView) Title() string {
     return "my game"
 }
 
-
+var scale int
 func main() {
     nPoint := 10
     points := make( []spline.Point2D, nPoint )
@@ -103,8 +103,8 @@ func main() {
     }
     spline_path = spline.NewSpline( points )
 
-
-    w,h,scale := 128,80,8
+    var w,h int
+    w,h,scale = 128,80,8
     view := NewView(w,h)
     simpleui.SetWindow( w,h, scale  )
     simpleui.Run( view )
