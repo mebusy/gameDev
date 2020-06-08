@@ -64,7 +64,7 @@ func (self *MyView) Update(t, dt float64) {
     }
 
     // draw spline line
-    spline_path.Draw( self.screenImage, true )
+    spline_path.Draw( self.screenImage, true, color.White )
 
     // draw agent
     offset := spline_path.GetNormalizedOffset( fMarker )
