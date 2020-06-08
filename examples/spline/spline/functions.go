@@ -1,5 +1,9 @@
 package spline
 
+import (
+    // "log"
+)
+
 func (self *Spline) GetSplinePoint( t float64, bLoop bool ) Point2D {
     // index of Ctl_points
     var p0,p1,p2,p3 int
@@ -9,7 +13,7 @@ func (self *Spline) GetSplinePoint( t float64, bLoop bool ) Point2D {
         p3 = p2 + 1
         p0 = p1 - 1
     } else {
-        p1 = int(t)
+        p1 = int(t) % len( self.Ctl_points )
         p2 = (p1 + 1) % len( self.Ctl_points )
         p3 = (p2 + 1) % len( self.Ctl_points )
         if p1 >= 1 {
@@ -22,6 +26,7 @@ func (self *Spline) GetSplinePoint( t float64, bLoop bool ) Point2D {
         p0,p1,p2,p3,
     }
 
+    // log.Println( t, pt_indices )
     // when the number of control Ctl_points > 4
     // t will be > 1
     t = t - float64(int(t))
@@ -56,7 +61,7 @@ func (self *Spline) GetSplineSlope( t float64, bLoop bool ) Point2D {
         p3 = p2 + 1
         p0 = p1 - 1
     } else {
-        p1 = int(t)
+        p1 = int(t) % len( self.Ctl_points )
         p2 = (p1 + 1) % len( self.Ctl_points )
         p3 = (p2 + 1) % len( self.Ctl_points )
         if p1 >= 1 {

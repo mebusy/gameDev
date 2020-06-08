@@ -36,7 +36,7 @@ func (self *MyView) Enter() {
 
 }
 func (self *MyView) Exit() {}
-func (self *MyView) Update(t, dt float64) {
+func (self *MyView) Update( gt, dt float64) {
     window := simpleui.GetWindow()
     // clear
     graph.FillRect( self.screenImage , self.screenImage.Bounds(), graph.COLOR_GREEN)
@@ -77,10 +77,33 @@ func (self *MyView) Update(t, dt float64) {
         fMarker += spline_path.TotalSplineLength
     }
 
+    // draw track 
+    fRes := 0.2
+    var t float64
+    var triangle = graph.NewTriangle(0,0,0,0,0,0)
+    for t=0; t< float64(len( spline_path.Ctl_points)) ; t+= fRes {
+        pl1 := spline_trackleft.GetSplinePoint( t, true )
+        pr1 := spline_trackright.GetSplinePoint( t, true )
+        pl2 := spline_trackleft.GetSplinePoint( t+fRes, true )
+        pr2 := spline_trackright.GetSplinePoint( t+fRes, true )
+
+        triangle.SetVert( 0, int(pl1.X ), int(pl1.Y)  )
+        triangle.SetVert( 1, int(pr1.X ), int(pr1.Y)  )
+        triangle.SetVert( 2, int(pr2.X ), int(pr2.Y)  )
+        graph.FillTriangle( self.screenImage, triangle, graph.COLOR_GRAY )
+
+        triangle.SetVert( 0, int(pl1.X ), int(pl1.Y)  )
+        triangle.SetVert( 1, int(pl2.X ), int(pl2.Y)  )
+        triangle.SetVert( 2, int(pr2.X ), int(pr2.Y)  )
+        graph.FillTriangle( self.screenImage, triangle, graph.COLOR_GRAY )
+    }
+
     // draw spline line
     spline_path.Draw( self.screenImage, true )
-    spline_trackleft.Draw( self.screenImage, false )
-    spline_trackright.Draw( self.screenImage, false )
+    // spline_trackleft.Draw( self.screenImage, false )
+    // spline_trackright.Draw( self.screenImage, false )
+
+
 
     // draw agent
     offset := spline_path.GetNormalizedOffset( fMarker )
@@ -123,8 +146,8 @@ func main() {
         for i:=0; i<nPoint; i++ {
             // pt := Point2D{ float64(10+i*10), 41  }
             pt := spline.Point2D{
-                X:float64(cx)+ 30*math.Sin(float64(i)/float64(nPoint)*2*math.Pi ),
-                Y:float64(cy)+ 30*math.Cos(float64(i)/float64(nPoint)*2*math.Pi ) }
+                X:float64(cx)+ 80*math.Sin(float64(i)/float64(nPoint)*2*math.Pi ),
+                Y:float64(cy)+ 80*math.Cos(float64(i)/float64(nPoint)*2*math.Pi ) }
             points[i] = pt
         }
 
