@@ -40,5 +40,30 @@ And I want to evolve my racing line towards a solution.
 
 So for each frame update, I'm going to assume that my racing line is at the same position as my control spline, but then I'm going to slightly alter the displacement values per iteration of evolution in an attempt to get this system to converge to a stable solution.
 
+---
+
+The first thing we should try is finding the shortest path around the track. 
+
+Here I have 3 control nodes. If we're looking for the minimum path around here , we probably want something like this. 
+
+![](imgs/racingline_track_6.png)
+
+Which means from our control path we want to move this node downwards.
+
+![](imgs/racingline_track_7.png)
+
+We know we can get the normal relatively easily from a point , but we can also do it a separate way too. 
+
+If we take 2 vector to left/right adjacent control nodes, and add them. 
+
+![](imgs/racingline_track_8.png)
+
+In order to minimize the curvature and perhaps also find the shortest distance,  we want to maximaize the angle θ for every node. 
+
+For my first proposal is that we will move the middle control node a little step along this vector created by adding the two separate vectors to the left/right adjacent nodes. 
+
+
+
+
 
 

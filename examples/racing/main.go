@@ -1,14 +1,18 @@
 package main
 
 import (
-    "github.com/mebusy/simpleui"
-    "github.com/go-gl/glfw/v3.1/glfw"
-    "image"
-    // "image/color"
-    // "image/draw"
-    "github.com/mebusy/simpleui/graph"
-    "spline"
-    "math"
+	"image"
+	"image/color"
+
+	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/mebusy/simpleui"
+
+	// "image/color"
+	// "image/draw"
+	"math"
+	"spline"
+
+	"github.com/mebusy/simpleui/graph"
 )
 
 type MyView struct {
@@ -61,13 +65,44 @@ func (self *MyView) Update( gt, dt float64) {
         spline_trackright.Ctl_points[i].Y = p1.Y - fTrackWidth* ( s1.X/slen)
     }
 
+    // Reset racing line
+    for i:=0; i< len(spline_racingline.Ctl_points); i++ {
+        spline_racingline.Ctl_points[i] = spline_path.Ctl_points[i]
+        displacement[i] = 0
+    }
+
+    for n:=0; n< nIterations; n++ {
+        for i:=0; i<len(spline_racingline.Ctl_points); i++ {
+
+        }
+        // clamp displaced points to track width
+        for i:=0; i<len(spline_racingline.Ctl_points); i++ {
+            if displacement[i] > fTrackWidth {
+                displacement[i] = fTrackWidth
+            }
+            if displacement[i] < -fTrackWidth {
+                displacement[i] = -fTrackWidth
+            }
+            s := spline_path.GetSplineSlope( float64(i), true )
+            slen := math.Sqrt( s.X*s.X + s.Y*s.Y )
+            s.X /= slen ;  s.Y /= slen
+
+            spline_racingline.Ctl_points[i].X = spline_path.Ctl_points[i].X +
+                (-s.Y)*displacement[i]
+            spline_racingline.Ctl_points[i].Y = spline_path.Ctl_points[i].Y +
+                ( s.X)*displacement[i]
+        }
+    }
 
     // update agent
     if simpleui.ReadKey(window, glfw.KeyA) {
-        fMarker -= 20 * dt
+        nIterations ++
     }
     if simpleui.ReadKey(window, glfw.KeyD) {
-        fMarker += 20 * dt
+        nIterations --
+        if nIterations < 0 {
+            nIterations = 0
+        }
     }
 
     if fMarker >= spline_path.TotalSplineLength {
@@ -99,9 +134,10 @@ func (self *MyView) Update( gt, dt float64) {
     }
 
     // draw spline line
-    spline_path.Draw( self.screenImage, true )
+    spline_path.Draw( self.screenImage, true, color.White )
     // spline_trackleft.Draw( self.screenImage, false )
     // spline_trackright.Draw( self.screenImage, false )
+    spline_racingline.Draw( self.screenImage, false, graph.COLOR_BLUE )
 
 
 
@@ -139,7 +175,7 @@ func main() {
     view := NewView(w,h)
     simpleui.SetWindow( w,h, scale  )
 
-    for t:=0; t<3; t++ {
+    for t:=0; t<4; t++ {
         nPoint := 20
         points := make( []spline.Point2D, nPoint )
         cx, cy :=  w/2, h/2
@@ -158,6 +194,8 @@ func main() {
             spline_trackleft = spline.NewSpline( points )
         case 2:
             spline_trackright = spline.NewSpline( points )
+        case 3:
+            spline_racingline = spline.NewSpline( points )
         }
     }
 
@@ -170,3 +208,9 @@ var fMarker float64
 var spline_path *spline.Spline
 var spline_trackleft *spline.Spline
 var spline_trackright *spline.Spline
+var spline_racingline *spline.Spline
+var displacement [20]float64
+var nIterations int = 1
+
+
+

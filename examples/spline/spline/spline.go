@@ -84,12 +84,12 @@ func (self *Spline) SelectControlPoint( mx,my float64 )  *Point2D {
 }
 
 
-func (self *Spline) Draw( dst *image.RGBA, bDrawCtlPoints bool ) {
+func (self *Spline) Draw( dst *image.RGBA, bDrawCtlPoints bool, line_color color.Color ) {
     // draw curve
     var t float64
     for t=0.0; t<float64(len(self.Ctl_points)); t+= 0.01 {
         pt := self.GetSplinePoint(t, true)
-        pt.Draw( dst, color.White, 1 )
+        pt.Draw( dst, line_color , 1 )
     }
     // Draw control point
     self.TotalSplineLength = 0
