@@ -13,6 +13,7 @@ import (
 	"spline"
 
 	"github.com/mebusy/simpleui/graph"
+    "log"
 )
 
 type MyView struct {
@@ -66,17 +67,40 @@ func (self *MyView) Update( gt, dt float64) {
     }
 
     // Reset racing line
-    for i:=0; i< len(spline_racingline.Ctl_points); i++ {
-        spline_racingline.Ctl_points[i] = spline_path.Ctl_points[i]
+    for i:=0; i< len(racingline.Ctl_points); i++ {
+        racingline.Ctl_points[i] = spline_path.Ctl_points[i]
         displacement[i] = 0
     }
 
     for n:=0; n< nIterations; n++ {
-        for i:=0; i<len(spline_racingline.Ctl_points); i++ {
+        for i:=0; i<len(racingline.Ctl_points); i++ {
+            ptRight := racingline.Ctl_points[ (i+1)% racingline.Size ]
+            ptLeft := racingline.Ctl_points[ (i-1+racingline.Size)% racingline.Size ]
+            ptMiddle := racingline.Ctl_points[i]
+
+            leftn := spline.Point2D{ X:ptLeft.X - ptMiddle.X , Y:ptLeft.Y - ptMiddle.Y }.Normalized()
+            rightn := spline.Point2D{ X:ptRight.X - ptMiddle.X ,Y: ptRight.Y - ptMiddle.Y }.Normalized()
+
+            vectorSum := spline.Point2D{ X:leftn.X + rightn.X , Y:leftn.Y + rightn.Y }.Normalized()
+
+            // Get point slope and normalize
+            s := spline_path.GetSplineSlope(float64(i),true).Normalized()
+            // project required correction onto point tangent to give displacement
+            dp := -s.Y * vectorSum.X + s.X * vectorSum.Y
+
+            // 1. find the shortest path if this line only
+            displacement[i] += dp*0.3
+
+            // the curvature is also important for racing 
+            bMinimumCurature := true
+            if bMinimumCurature {
+                displacement[(i+1)%racingline.Size] += -dp * 0.2
+                displacement[(i-1+racingline.Size)%racingline.Size] += -dp * 0.2
+            }
 
         }
         // clamp displaced points to track width
-        for i:=0; i<len(spline_racingline.Ctl_points); i++ {
+        for i:=0; i<len(racingline.Ctl_points); i++ {
             if displacement[i] > fTrackWidth {
                 displacement[i] = fTrackWidth
             }
@@ -87,22 +111,27 @@ func (self *MyView) Update( gt, dt float64) {
             slen := math.Sqrt( s.X*s.X + s.Y*s.Y )
             s.X /= slen ;  s.Y /= slen
 
-            spline_racingline.Ctl_points[i].X = spline_path.Ctl_points[i].X +
+            racingline.Ctl_points[i].X = spline_path.Ctl_points[i].X +
                 (-s.Y)*displacement[i]
-            spline_racingline.Ctl_points[i].Y = spline_path.Ctl_points[i].Y +
+            racingline.Ctl_points[i].Y = spline_path.Ctl_points[i].Y +
                 ( s.X)*displacement[i]
         }
     }
 
     // update agent
-    if simpleui.ReadKey(window, glfw.KeyA) {
-        nIterations ++
-    }
     if simpleui.ReadKey(window, glfw.KeyD) {
+        nIterations ++
+        if nIterations > 100 {
+            nIterations = 100
+        }
+        log.Println( "nIterations:", nIterations )
+    }
+    if simpleui.ReadKey(window, glfw.KeyA) {
         nIterations --
         if nIterations < 0 {
             nIterations = 0
         }
+        log.Println( "nIterations:", nIterations )
     }
 
     if fMarker >= spline_path.TotalSplineLength {
@@ -137,7 +166,7 @@ func (self *MyView) Update( gt, dt float64) {
     spline_path.Draw( self.screenImage, true, color.White )
     // spline_trackleft.Draw( self.screenImage, false )
     // spline_trackright.Draw( self.screenImage, false )
-    spline_racingline.Draw( self.screenImage, false, graph.COLOR_BLUE )
+    racingline.Draw( self.screenImage, false, graph.COLOR_BLUE )
 
 
 
@@ -195,7 +224,7 @@ func main() {
         case 2:
             spline_trackright = spline.NewSpline( points )
         case 3:
-            spline_racingline = spline.NewSpline( points )
+            racingline = spline.NewSpline( points )
         }
     }
 
@@ -208,7 +237,7 @@ var fMarker float64
 var spline_path *spline.Spline
 var spline_trackleft *spline.Spline
 var spline_trackright *spline.Spline
-var spline_racingline *spline.Spline
+var racingline *spline.Spline
 var displacement [20]float64
 var nIterations int = 1
 

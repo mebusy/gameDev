@@ -40,6 +40,10 @@ func (self *Point2D) SetPosition( x, y float64 ) {
     self.X = x
     self.Y = y
 }
+func (self Point2D) Normalized( ) Point2D {
+    vecLen := math.Sqrt(  self.X*self.X + self.Y * self.Y )
+    return Point2D{ self.X/vecLen, self.Y/vecLen }
+}
 
 // ===================================
 
@@ -48,6 +52,7 @@ type Spline struct {
     ctl_pt_lengths []float64
     TotalSplineLength float64
     nSelectedPoint int
+    Size int
 }
 
 func NewSpline( points []Point2D  ) *Spline {
@@ -57,6 +62,7 @@ func NewSpline( points []Point2D  ) *Spline {
     spl.Ctl_points = make( []Point2D, nPoint )
     spl.ctl_pt_lengths = make( []float64, nPoint )
     spl.nSelectedPoint = -1
+    spl.Size = nPoint
 
     for i:=0; i<nPoint; i++ {
         spl.Ctl_points[i] = points[i]
