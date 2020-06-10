@@ -119,10 +119,10 @@ func (self *MyView) Update(t, dt float64) {
     for y:=0; y<screenH/2; y++ {
         // normalize the screen height value to between 0.0 ~ 1.0
         fSampleDepth := float64(y) / (float64(screenH/2))
-
         if fSampleDepth == 0 {
-            fSampleDepth = 0.00000001
+            fSampleDepth = 0.000001
         }
+
         // invert sample depth
         // scanline going across the map frustum 
 
@@ -153,7 +153,6 @@ func (self *MyView) Update(t, dt float64) {
                 panic( "sample overflow" )
             }
 
-
             // simple sampling,  not nearest neighbor 
             sampleColor := sprGround.At(  int(math.Round( fSampleX * float64(nMapSize))) , int(math.Round( fSampleY * float64(nMapSize))) )
             // draw to bottom screen
@@ -162,6 +161,8 @@ func (self *MyView) Update(t, dt float64) {
             sampleColor = sprSky.At(  int(math.Round( fSampleX * float64(nMapSize))) , int(math.Round( fSampleY * float64(nMapSize))) )
             self.screenImage.Set( x, screenH/2 -y, sampleColor  )
         }
+        // hack , the center blackline
+        // graph.DrawLine( self.screenImage , 0,  screenH/2, screenW, screenH/2 , graph.COLOR_CYAN )
     }
 
 }
