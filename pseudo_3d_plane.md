@@ -37,7 +37,26 @@ I'm going to put some naming convertions.
 
 ![](imgs/mode7_5.png)
 
+You can not simply naively linearly sample from frustum  or will show us weird visual effect...
 
+![](imgs/mode7_6.png)
+
+Perspective assumes that we've got 3 components to an image , x,y and z. Where z is equal to the depth. And we intuitively know that things that are further away move less and have less significance. 
+
+So if we were to look at the relationship between depth and X & Y, we might be able to assume is that some new posion  x' = x / z. And the same goes for the y axis : y' = y / z.
+
+This implies that as z approaches infinity any changes to X become minuscule, whereas if z approached 0, the changes become very large.
+
+What's interesting here is that we're seeing the depth is certainly a 1/z depth relationship to X & Y. 
+
+Here is an example to illustrate the relationship:
+
+![](imgs/mode7_7.png)
+
+Some notes: 
+
+1. increasing fFar  has the effect that the camera raises from the groud 
+2. increasing / decreasing  fNear , make the ground curvature
 
 
 
