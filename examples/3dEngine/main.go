@@ -54,6 +54,9 @@ func (self *MyView) Update(t, dt float64) {
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
                 graph.COLOR_BLACK )
 
+    for _, tri := range meshCube.Tris {
+
+    }
 
 }
 
