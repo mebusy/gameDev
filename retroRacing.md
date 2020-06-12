@@ -21,6 +21,13 @@
     - ![](imgs/retro_racing_4.png)
     - as the player moves around the track, we look how far they've traveled. Accumulate the distance for all of the sections and work out which section they are in.  and all we need to display on the screen is the tracks curvature. 
 
+- How to represent track curvature
+    - calculate which section you are in , and what is the curvature in this section
+    - update the current track curvature with  
+        - `+ ( targetCurvature - curCurvature ) * dt * speed_normalized`
+        - `* speed_normalized` because if car dosen't move,  the curvature should not change
 
+- How to add player's control 
+    - when in a curve track,  the horizontal offset of the car is accumulated, and player must control the car to cancel out that offset to keep the car moving inside the track.
 
 
