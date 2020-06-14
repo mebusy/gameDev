@@ -90,27 +90,34 @@ func (self *MyView) Update(t, dt float64) {
     var triProj,triRotZ,triRotZX m3d.Triangle
     var tri2D = graph.NewTriangle(0,0,0,0,0,0)
     for _, tri := range meshCube.Tris {
+        // rotate and transform
         for i:=0;i<3;i++ {
-
             // rot z
             m3d.MultiplyMatrixVector( matRotZ, tri.P[i], &triRotZ.P[i] )
             // rot x
             m3d.MultiplyMatrixVector( matRotX, triRotZ.P[i], &triRotZX.P[i] )
             // debug , translate the trianagle + 3z
             triRotZX.P[i].Z += 3
-
-            // projection
-            m3d.MultiplyMatrixVector( matProj, triRotZX.P[i], &triProj.P[i] )
-
-            // scale into view
-            // 1. shift a coordinate to between [0,1]
-            // 2. scale it to the appropriate size
-            x2d := (triProj.P[i].X + 1) * 0.5 * float64(screenW)
-            y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
-            tri2D.SetVert(i, int( x2d  ), int( y2d ) )
         }
-        graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_WHITE )
-    }
+
+        // calculate normal
+        // draw only when triangle is visible
+        if triRotZX.CalculateNormal().Z < 0 {
+            for i:=0;i<3;i++ {
+                // projection
+                m3d.MultiplyMatrixVector( matProj, triRotZX.P[i], &triProj.P[i] )
+
+                // scale into view
+                // 1. shift a coordinate to between [0,1]
+                // 2. scale it to the appropriate size
+                x2d := (triProj.P[i].X + 1) * 0.5 * float64(screenW)
+                y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
+                tri2D.SetVert(i, int( x2d  ), int( y2d ) )
+            }
+            graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_WHITE )
+
+        } // draw visible triangle
+    } // visit triangle
 }
 
 func (self *MyView) OnKey(key glfw.Key) {}

@@ -7,7 +7,8 @@
 - [Perlin-like noise](perlin_noise.md)
 - [retro racing game](retroRacing.md)
 - 3D
-    - [3d 1](3d_1.md)
+    - [Triangles & Projection](3d_1.md)
+    - [Normals, Culling, Lighting](3d_2.md)
 
 
 
