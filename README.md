@@ -9,6 +9,7 @@
 - 3D
     - [Triangles & Projection](3d_1.md)
     - [Normals, Culling, Lighting](3d_2.md)
+    - [Cameras & Clipping](3d_3.md)
 
 
 
