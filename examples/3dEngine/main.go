@@ -7,7 +7,7 @@ import (
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/mebusy/simpleui"
 
-	// "image/color"
+	"image/color"
 	"github.com/mebusy/simpleui/graph"
 	// "image/draw"
 	"math/rand"
@@ -50,6 +50,8 @@ func (self *MyView) Enter() {
         m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0},    {0.0, 0.0, 1.0},    {0.0, 0.0, 0.0} }},
         m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0},    {0.0, 0.0, 0.0},    {1.0, 0.0, 0.0} }},
     }
+
+    meshCube.LoadFromObj( "../../VideoShip.obj"  )
 
     fZNear := 0.1
     fZFar := 1000.0
@@ -102,7 +104,15 @@ func (self *MyView) Update(t, dt float64) {
 
         // calculate normal
         // draw only when triangle is visible
-        if triRotZX.CalculateNormal().Z < 0 {
+        normal := triRotZX.CalculateNormal()
+        /*
+        if normal.Z < 0 {
+        /*/
+        if normal.Dot(  vCamera.VectorTo( triRotZX.P[0] ) ) < 0  {
+        //*/
+            // illumination 
+            dp := normal.Dot( light_direction_normalized )
+
             for i:=0;i<3;i++ {
                 // projection
                 m3d.MultiplyMatrixVector( matProj, triRotZX.P[i], &triProj.P[i] )
@@ -114,7 +124,9 @@ func (self *MyView) Update(t, dt float64) {
                 y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
                 tri2D.SetVert(i, int( x2d  ), int( y2d ) )
             }
-            graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_WHITE )
+            gray := uint8(dp*200)
+            graph.FillTriangle( self.screenImage, tri2D, color.RGBA{ gray,gray,gray,255 } )
+            graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_BLACK )
 
         } // draw visible triangle
     } // visit triangle
@@ -141,3 +153,6 @@ func main() {
 var meshCube m3d.Mesh
 var matProj m3d.Mat
 var fTheta float64
+
+var vCamera m3d.Vec3D
+var light_direction_normalized =  m3d.Vec3D{ X:0,Y:0,Z:-1 }

@@ -27,6 +27,14 @@ func (self *Vec3D) Normalize() {
     self.Z /= l
 }
 
+func (self *Vec3D) VectorTo( to Vec3D  ) Vec3D {
+    return Vec3D{ to.X-self.X, to.Y-self.Y, to.Z-self.Z }
+}
+
+func (self *Vec3D) Dot( v Vec3D ) float64 {
+    return self.X*v.X + self.Y*v.Y + self.Z*v.Z
+}
+
 // ===============================
 
 func (self *Triangle) CalculateNormal() Vec3D {
