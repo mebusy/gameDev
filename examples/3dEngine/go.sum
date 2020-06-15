@@ -10,6 +10,8 @@ github.com/gordonklaus/portaudio v0.0.0-20180817120803-00e7307ccd93/go.mod h1:Hf
 github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/mebusy/simpleui v0.0.0-20200612094250-7b1f24fc353c h1:qMBvZ4weYobdtR78UMw2w16nSWgePIdWSXTGxwqg17A=
 github.com/mebusy/simpleui v0.0.0-20200612094250-7b1f24fc353c/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
+github.com/mebusy/simpleui v0.0.0-20200615144653-0bbaaa84172c h1:HENt119qYjuwHdzblNRKXw0ckThQCpbep2si10V6Qpo=
+github.com/mebusy/simpleui v0.0.0-20200615144653-0bbaaa84172c/go.mod h1:8HbPm1TiWMLZL+WRSPHtpeGVs106cOk5d92cXbT09eY=
 golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=

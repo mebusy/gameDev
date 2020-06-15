@@ -1,6 +1,7 @@
 package main
 
 import (
+    "sort"
 	"image"
 	"math"
 
@@ -29,27 +30,6 @@ func NewView( w,h int) *MyView {
 var test_pts [6]int
 func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
-
-    meshCube.Tris = []m3d.Triangle {
-        // SOUTH face . FRONT
-        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0},    {0.0, 1.0, 0.0},    {1.0, 1.0, 0.0} }} ,
-        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0},    {1.0, 1.0, 0.0},    {1.0, 0.0, 0.0} }},
-        // EAST
-        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 0.0},    {1.0, 1.0, 0.0},    {1.0, 1.0, 1.0} }},
-        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 0.0},    {1.0, 1.0, 1.0},    {1.0, 0.0, 1.0} }},
-        // NORTH
-        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0},    {1.0, 1.0, 1.0},    {0.0, 1.0, 1.0} }},
-        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0},    {0.0, 1.0, 1.0},    {0.0, 0.0, 1.0} }},
-        // EAST
-        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 1.0},    {0.0, 1.0, 1.0},    {0.0, 1.0, 0.0} }},
-        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 1.0},    {0.0, 1.0, 0.0},    {0.0, 0.0, 0.0} }},
-        // TOP
-        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 1.0, 0.0},    {0.0, 1.0, 1.0},    {1.0, 1.0, 1.0} }},
-        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 1.0, 0.0},    {1.0, 1.0, 1.0},    {1.0, 1.0, 0.0} }},
-        // BOTTOM
-        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0},    {0.0, 0.0, 1.0},    {0.0, 0.0, 0.0} }},
-        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0},    {0.0, 0.0, 0.0},    {1.0, 0.0, 0.0} }},
-    }
 
     meshCube.LoadFromObj( "../../VideoShip.obj"  )
 
@@ -88,9 +68,10 @@ func (self *MyView) Update(t, dt float64) {
     matRotX.Set( 2,2, math.Cos(fTheta*0.5) )
     matRotX.Set( 3,3, 1 )
 
-    // draw
-    var triProj,triRotZ,triRotZX m3d.Triangle
-    var tri2D = graph.NewTriangle(0,0,0,0,0,0)
+    triangles2Raster := make( []m3d.Triangle, 0 )
+
+    // draw triangels
+    var triRotZ,triRotZX m3d.Triangle
     for _, tri := range meshCube.Tris {
         // rotate and transform
         for i:=0;i<3;i++ {
@@ -99,7 +80,7 @@ func (self *MyView) Update(t, dt float64) {
             // rot x
             m3d.MultiplyMatrixVector( matRotX, triRotZ.P[i], &triRotZX.P[i] )
             // debug , translate the trianagle + 3z
-            triRotZX.P[i].Z += 3
+            triRotZX.P[i].Z += 8
         }
 
         // calculate normal
@@ -113,23 +94,38 @@ func (self *MyView) Update(t, dt float64) {
             // illumination 
             dp := normal.Dot( light_direction_normalized )
 
+            var triProj m3d.Triangle
+            triProj.Color = dp
             for i:=0;i<3;i++ {
                 // projection
                 m3d.MultiplyMatrixVector( matProj, triRotZX.P[i], &triProj.P[i] )
-
-                // scale into view
-                // 1. shift a coordinate to between [0,1]
-                // 2. scale it to the appropriate size
-                x2d := (triProj.P[i].X + 1) * 0.5 * float64(screenW)
-                y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
-                tri2D.SetVert(i, int( x2d  ), int( y2d ) )
             }
-            gray := uint8(dp*200)
-            graph.FillTriangle( self.screenImage, tri2D, color.RGBA{ gray,gray,gray,255 } )
-            graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_BLACK )
+            triangles2Raster = append( triangles2Raster , triProj )
+
 
         } // draw visible triangle
     } // visit triangle
+
+    sort.SliceStable( triangles2Raster , func(i, j int) bool {
+        return triangles2Raster[i].MidPointZ() > triangles2Raster[j].MidPointZ()
+    })
+
+    var tri2D = graph.NewTriangle(0,0,0,0,0,0)
+    for _, triProj := range triangles2Raster {
+        for i:=0;i<3;i++ {
+            // scale into view
+            // 1. shift a coordinate to between [0,1]
+            // 2. scale it to the appropriate size
+            x2d := (triProj.P[i].X + 1) * 0.5 * float64(screenW)
+            y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
+            tri2D.SetVert(i, int( x2d  ), int( y2d ) )
+        }
+
+        gray := uint8(triProj.Color*200)
+        graph.FillTriangle( self.screenImage, tri2D, color.RGBA{ gray,gray,gray,255 } )
+        // graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_BLACK )
+    }
+
 }
 
 func (self *MyView) OnKey(key glfw.Key) {}

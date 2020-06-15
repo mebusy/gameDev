@@ -8,6 +8,7 @@ type Vec3D struct {
 
 type Triangle struct {
     P [3]Vec3D
+    Color float64
 }
 
 type Mesh struct {
@@ -51,6 +52,10 @@ func (self *Triangle) CalculateNormal() Vec3D {
     normal.Z = line1.X*line2.Y - line1.Y*line2.X
     normal.Normalize()
     return normal
+}
+
+func (self *Triangle) MidPointZ() float64 {
+    return (self.P[0].Z + self.P[1].Z + self.P[2].Z)/3
 }
 
 // ===============================
