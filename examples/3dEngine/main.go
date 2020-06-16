@@ -30,7 +30,7 @@ var test_pts [6]int
 func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
 
-    meshCube.LoadFromObj( "axis2.obj"  )
+    meshCube.LoadFromObj( "cube.obj"  )
     /*
     meshCube.Tris = []m3d.Triangle {
         // SOUTH face . FRONT
