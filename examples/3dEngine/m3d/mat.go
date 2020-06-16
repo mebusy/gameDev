@@ -2,9 +2,14 @@ package m3d
 
 import (
     "math"
+    // "log"
 )
 
 func MultiplyMatrixVector( m Mat, i Vec3D ) Vec3D {
+    // debug
+    if i.W == 0 {
+        println( "[debug]: vector with w:0" )
+    }
     var o Vec3D
     o.X = i.X*m.M[(0<<2)+0]+i.Y*m.M[(0<<2)+1]+i.Z*m.M[(0<<2)+2]+m.M[(0<<2)+3]
     o.Y = i.X*m.M[(1<<2)+0]+i.Y*m.M[(1<<2)+1]+i.Z*m.M[(1<<2)+2]+m.M[(1<<2)+3]
@@ -116,17 +121,19 @@ func NewPointAtMat ( pos Vec3D, target Vec3D , up Vec3D ) Mat {
 
     newRight := newUp.Cross(  newForward ).Normalize()
 
+    // log.Println( newForward, newUp, newRight )
+
     var m Mat
     m.LoadIdentity()
-    m.Set( 0,0, newForward.X )
-    m.Set( 1,0, newForward.Y )
-    m.Set( 2,0, newForward.Z )
-    m.Set( 0,1, newRight.X )
-    m.Set( 1,1, newRight.Y )
-    m.Set( 2,1, newRight.Z )
-    m.Set( 0,2, newUp.X )
-    m.Set( 1,2, newUp.Y )
-    m.Set( 2,2, newUp.Z )
+    m.Set( 0,0, newRight.X )
+    m.Set( 1,0, newRight.Y )
+    m.Set( 2,0, newRight.Z )
+    m.Set( 0,1, newUp.X )
+    m.Set( 1,1, newUp.Y )
+    m.Set( 2,1, newUp.Z )
+    m.Set( 0,2, newForward.X )
+    m.Set( 1,2, newForward.Y )
+    m.Set( 2,2, newForward.Z )
 
     m.Set( 0,3, pos.X )
     m.Set( 1,3, pos.Y )

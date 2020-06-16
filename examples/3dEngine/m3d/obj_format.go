@@ -29,6 +29,7 @@ func (self *Mesh) LoadFromObj( filename string ) {
         }
         if line[:1] == "v" {
             var v Vec3D
+            v.W = 1
             fmt.Sscanf( line[1:], "%f %f %f", &v.X, &v.Y, &v.Z )
             verts = append( verts, v )
             // log.Println( cnt, v.X, v.Y, v.Z )
