@@ -85,7 +85,7 @@ func (self *MyView) Update(t, dt float64) {
     matRotZ := m3d.NewRotZMat( fTheta )
     matRotX := m3d.NewRotXMat( fTheta * 0.5 )
 
-    matTrans := m3d.NewTransMat( 0,0, 5 )
+    matTrans := m3d.NewTransMat( 6,0, 3 )
     matWorld := m3d.NewIdentityMat()
     matWorld = m3d.MultiplyMatrixMatrix( matRotX , matRotZ )
     matWorld = m3d.MultiplyMatrixMatrix( matTrans , matWorld )
@@ -150,9 +150,9 @@ func (self *MyView) Update(t, dt float64) {
             tri2D.SetVert(i, int( x2d  ), int( y2d ) )
         }
 
-        gray := uint8(triProj.Color*200)
+        gray := uint8(triProj.Color*128 + 100  )
         graph.FillTriangle( self.screenImage, tri2D, color.RGBA{ gray,gray,gray,255 } )
-        // graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_BLACK )
+        graph.DrawTriangle( self.screenImage, tri2D, graph.COLOR_RED )
     }
 
 }
@@ -169,7 +169,7 @@ func (self *MyView) Title() string {
 var screenW, screenH, scale int
 
 func main() {
-    screenW,screenH,scale = 256,240,2
+    screenW,screenH,scale = 512,256,2
     view := NewView(screenW,screenH)
     simpleui.SetWindow( screenW,screenH , scale  )
     simpleui.Run( view )

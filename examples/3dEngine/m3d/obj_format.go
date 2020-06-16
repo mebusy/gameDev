@@ -31,6 +31,7 @@ func (self *Mesh) LoadFromObj( filename string ) {
             var v Vec3D
             v.W = 1
             fmt.Sscanf( line[1:], "%f %f %f", &v.X, &v.Y, &v.Z )
+            // v.X = -v.X // mebusy, hack
             verts = append( verts, v )
             // log.Println( cnt, v.X, v.Y, v.Z )
         } else if line[:1] == "f" {
