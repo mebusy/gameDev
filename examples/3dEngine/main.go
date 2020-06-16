@@ -3,7 +3,7 @@ package main
 import (
     "sort"
 	"image"
-	"math"
+	// "math"
 
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/mebusy/simpleui"
@@ -31,65 +31,70 @@ var test_pts [6]int
 func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
 
-    meshCube.LoadFromObj( "../../VideoShip.obj"  )
+    meshCube.LoadFromObj( "axis.obj"  )
+    /*
+    meshCube.Tris = []m3d.Triangle {
+        // SOUTH face . FRONT
+        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0,1},    {0.0, 1.0, 0.0,1},    {1.0, 1.0, 0.0,1} },1} ,
+        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0,1},    {1.0, 1.0, 0.0,1},    {1.0, 0.0, 0.0,1} },1},
+        // EAST
+        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 0.0,1},    {1.0, 1.0, 0.0,1},    {1.0, 1.0, 1.0,1} },1},
+        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 0.0,1},    {1.0, 1.0, 1.0,1},    {1.0, 0.0, 1.0,1} },1},
+        // NORTH
+        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0,1},    {1.0, 1.0, 1.0,1},    {0.0, 1.0, 1.0,1} },1},
+        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0,1},    {0.0, 1.0, 1.0,1},    {0.0, 0.0, 1.0,1} },1},
+        // EAST
+        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 1.0,1},    {0.0, 1.0, 1.0,1},    {0.0, 1.0, 0.0,1} },1},
+        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 1.0,1},    {0.0, 1.0, 0.0,1},    {0.0, 0.0, 0.0,1} },1},
+        // TOP
+        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 1.0, 0.0,1},    {0.0, 1.0, 1.0,1},    {1.0, 1.0, 1.0,1} },1},
+        m3d.Triangle{ [3]m3d.Vec3D{{0.0, 1.0, 0.0,1},    {1.0, 1.0, 1.0,1},    {1.0, 1.0, 0.0,1} },1},
+        // BOTTOM
+        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0,1},    {0.0, 0.0, 1.0,1},    {0.0, 0.0, 0.0,1} },1},
+        m3d.Triangle{ [3]m3d.Vec3D{{1.0, 0.0, 1.0,1},    {0.0, 0.0, 0.0,1},    {1.0, 0.0, 0.0,1} },1},
+    }
+    //*/
 
     fZNear := 0.1
     fZFar := 1000.0
     fFov := 90.0 // degree
     fAspectRatio := float64(screenH)/float64(screenW)
-    fFovRad := 1/math.Tan(  fFov*0.5 /180 *math.Pi  )
 
-    matProj.Clear()
-    matProj.Set(0,0, fAspectRatio * fFovRad )
-    matProj.Set(1,1, fFovRad)
-    matProj.Set(2,2, fZFar / (fZFar-fZNear))
-    matProj.Set(2,3,-fZNear * fZFar / (fZFar-fZNear))
-    matProj.Set(3,2, 1)
-    matProj.Set(3,3, 0)
+    matProj  = m3d.NewProjectionMat( fFov, fAspectRatio, fZNear, fZFar  )
+
 }
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
 
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
                 graph.COLOR_BLACK )
-    var matRotZ , matRotX m3d.Mat
-    fTheta += dt
-    matRotZ.Set( 0,0, math.Cos(fTheta)  )
-    matRotZ.Set( 1,0, math.Sin(fTheta)  )
-    matRotZ.Set( 0,1, -math.Sin(fTheta)  )
-    matRotZ.Set( 1,1, math.Cos(fTheta)  )
-    matRotZ.Set( 2,2, 1 )
-    matRotZ.Set( 3,3, 1 )
+    // fTheta += dt
+    matRotZ := m3d.NewRotZMat( fTheta )
+    matRotX := m3d.NewRotXMat( fTheta * 0.5 )
 
-    matRotX.Set( 0,0, 1 )
-    matRotX.Set( 1,1, math.Cos(fTheta*0.5) )
-    matRotX.Set( 2,1, math.Sin(fTheta*0.5) )
-    matRotX.Set( 1,2, -math.Sin(fTheta*0.5) )
-    matRotX.Set( 2,2, math.Cos(fTheta*0.5) )
-    matRotX.Set( 3,3, 1 )
+    matTrans := m3d.NewTransMat( 0,0, 5 )
+    matWorld := m3d.NewIdentityMat()
+    matWorld = m3d.MultiplyMatrixMatrix( matRotX , matRotZ )
+    matWorld = m3d.MultiplyMatrixMatrix( matTrans , matWorld )
+
 
     triangles2Raster := make( []m3d.Triangle, 0 )
 
     // draw triangels
-    var triRotZ,triRotZX m3d.Triangle
+    var triTransformed m3d.Triangle
     for _, tri := range meshCube.Tris {
         // rotate and transform
         for i:=0;i<3;i++ {
-            // rot z
-            m3d.MultiplyMatrixVector( matRotZ, tri.P[i], &triRotZ.P[i] )
-            // rot x
-            m3d.MultiplyMatrixVector( matRotX, triRotZ.P[i], &triRotZX.P[i] )
-            // debug , translate the trianagle + 3z
-            triRotZX.P[i].Z += 8
+            triTransformed.P[i] = m3d.MultiplyMatrixVector( matWorld, tri.P[i] )
         }
 
         // calculate normal
         // draw only when triangle is visible
-        normal := triRotZX.CalculateNormal()
+        normal := triTransformed.CalculateNormal()
         /*
         if normal.Z < 0 {
         /*/
-        if normal.Dot(  vCamera.VectorTo( triRotZX.P[0] ) ) < 0  {
+        if normal.Dot( triTransformed.P[0].To(vCamera) ) > 0  {
         //*/
             // illumination 
             dp := normal.Dot( light_direction_normalized )
@@ -98,7 +103,7 @@ func (self *MyView) Update(t, dt float64) {
             triProj.Color = dp
             for i:=0;i<3;i++ {
                 // projection
-                m3d.MultiplyMatrixVector( matProj, triRotZX.P[i], &triProj.P[i] )
+                triProj.P[i] = m3d.MultiplyMatrixVector( matProj, triTransformed.P[i] ).NormalizeByW()
             }
             triangles2Raster = append( triangles2Raster , triProj )
 
@@ -140,7 +145,7 @@ func (self *MyView) Title() string {
 var screenW, screenH, scale int
 
 func main() {
-    screenW,screenH,scale = 256,128,2
+    screenW,screenH,scale = 256,240,2
     view := NewView(screenW,screenH)
     simpleui.SetWindow( screenW,screenH , scale  )
     simpleui.Run( view )
@@ -151,4 +156,9 @@ var matProj m3d.Mat
 var fTheta float64
 
 var vCamera m3d.Vec3D
-var light_direction_normalized =  m3d.Vec3D{ X:0,Y:0,Z:-1 }
+var vLookDir m3d.Vec3D
+var light_direction_normalized =  m3d.Vec3D{ X:0,Y:0,Z:-1,W:1 }
+
+
+
+
