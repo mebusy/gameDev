@@ -11,10 +11,11 @@ func MultiplyMatrixVector( m Mat, i Vec3D ) Vec3D {
         println( "[debug]: vector with w:0" )
     }
     var o Vec3D
-    o.X = i.X*m.M[(0<<2)+0]+i.Y*m.M[(0<<2)+1]+i.Z*m.M[(0<<2)+2]+m.M[(0<<2)+3]
-    o.Y = i.X*m.M[(1<<2)+0]+i.Y*m.M[(1<<2)+1]+i.Z*m.M[(1<<2)+2]+m.M[(1<<2)+3]
-    o.Z = i.X*m.M[(2<<2)+0]+i.Y*m.M[(2<<2)+1]+i.Z*m.M[(2<<2)+2]+m.M[(2<<2)+3]
-    o.W = i.X*m.M[(3<<2)+0]+i.Y*m.M[(3<<2)+1]+i.Z*m.M[(3<<2)+2]+m.M[(3<<2)+3]
+    o.X = i.X*m.M[(0<<2)+0]+i.Y*m.M[(0<<2)+1]+i.Z*m.M[(0<<2)+2]+i.W*m.M[(0<<2)+3]
+    o.Y = i.X*m.M[(1<<2)+0]+i.Y*m.M[(1<<2)+1]+i.Z*m.M[(1<<2)+2]+i.W*m.M[(1<<2)+3]
+    o.Z = i.X*m.M[(2<<2)+0]+i.Y*m.M[(2<<2)+1]+i.Z*m.M[(2<<2)+2]+i.W*m.M[(2<<2)+3]
+    o.W = i.X*m.M[(3<<2)+0]+i.Y*m.M[(3<<2)+1]+i.Z*m.M[(3<<2)+2]+i.W*m.M[(3<<2)+3]
+
     /*
     // if w == 0, this point makes no sense
     // this is internally done by openGL
@@ -154,7 +155,7 @@ func QuickInverse( m0 Mat ) Mat {
         }
     }
     for i:=0; i<3; i++ {
-        m.Set(i,3,  -(m0.At(0,3)*m0.At(0,i) + m0.At(1,3)*m0.At(1,i) + m0.At(2,3)*m0.At(1,i))  )
+        m.Set(i,3,  -(m0.At(0,3)*m0.At(0,i) + m0.At(1,3)*m0.At(1,i) + m0.At(2,3)*m0.At(2,i))  )
     }
 
     return m

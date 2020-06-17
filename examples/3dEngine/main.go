@@ -62,7 +62,7 @@ func (self *MyView) Enter() {
     matProj  = m3d.NewProjectionMat( fFov, fAspectRatio, fZNear, fZFar  )
 
     for _, vec := range (   []m3d.Vec3D{ {1,1,8,1}, {1,1,7,1}, {1,1,0.2,1}, {1,1,1000,1} } ) {
-        log.Printf( "project %v -> %v" , vec , m3d.MultiplyMatrixVector( matProj, vec ).NormalizeByW()  )
+        log.Printf( "project %v -> %v" , vec , m3d.MultiplyMatrixVector( matProj, vec )  )
     }
 
 }
@@ -81,6 +81,20 @@ func (self *MyView) Update(t, dt float64) {
     if simpleui.ReadKey(windows, glfw.KeyRight) {
         vCamera.X += 8 * dt
     }
+    vForward := vLookDir.Mul( 8*dt )
+    if simpleui.ReadKey(windows, glfw.KeyW) {
+        vCamera = vCamera.Add( vForward )
+    }
+    if simpleui.ReadKey(windows, glfw.KeyS) {
+        vCamera = vCamera.Sub( vForward )
+    }
+
+    if simpleui.ReadKey(windows, glfw.KeyA) {
+        fYaw -= 2 * dt
+    }
+    if simpleui.ReadKey(windows, glfw.KeyD) {
+        fYaw += 2 * dt
+    }
 
     graph.FillRect( self.screenImage, self.screenImage.Bounds() ,
                 graph.COLOR_BLACK )
@@ -88,14 +102,23 @@ func (self *MyView) Update(t, dt float64) {
     matRotZ := m3d.NewRotZMat( fTheta )
     matRotX := m3d.NewRotXMat( fTheta * 0.5 )
 
-    matTrans := m3d.NewTransMat( 0,0, 3 )
+    matTrans := m3d.NewTransMat( 0,0, 5 )
     matWorld := m3d.NewIdentityMat()
     matWorld = m3d.MultiplyMatrixMatrix( matRotX , matRotZ )
     matWorld = m3d.MultiplyMatrixMatrix( matTrans , matWorld )
 
+    /*
     vLookDir = m3d.Vec3D{ 0,0,1,1 }
     vUp := m3d.Vec3D{ 0,1,0,1 }
     vTarget := vCamera.Add(vLookDir)
+    /*/
+    vUp := m3d.Vec3D{ 0,1,0,1 }
+    vTarget := m3d.Vec3D{ 0,0,1,1 }
+    matCameraRot := m3d.NewRotYMat( -fYaw )
+    vLookDir = m3d.MultiplyMatrixVector( matCameraRot , vTarget )
+    // log.Println(vLookDir)
+    vTarget = vCamera.Add( vLookDir )
+    //*/
 
     matCamera := m3d.NewPointAtMat( vCamera, vTarget, vUp  )
     matView := m3d.QuickInverse( matCamera )
@@ -186,6 +209,7 @@ var vCamera m3d.Vec3D = m3d.Vec3D{ X:0,Y:0,Z:0,W:1 }
 var vLookDir m3d.Vec3D
 var light_direction_normalized =  m3d.Vec3D{ X:0,Y:0,Z:-1,W:1 }
 
+var fYaw float64
 
 
 
