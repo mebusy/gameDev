@@ -61,7 +61,10 @@ func (self *MyView) Enter() {
 
     matProj  = m3d.NewProjectionMat( fFov, fAspectRatio, fZNear, fZFar  )
 
-    log.Println( "project 1,1,8 -> " , m3d.MultiplyMatrixVector( matProj, m3d.Vec3D{1,1,8,1}  )  )
+    for _, vec := range (   []m3d.Vec3D{ {1,1,8,1}, {1,1,7,1}, {1,1,0.2,1}, {1,1,1000,1} } ) {
+        log.Printf( "project %v -> %v" , vec , m3d.MultiplyMatrixVector( matProj, vec ).NormalizeByW()  )
+    }
+
 }
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {

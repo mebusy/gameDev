@@ -7,7 +7,7 @@ import (
 
 func MultiplyMatrixVector( m Mat, i Vec3D ) Vec3D {
     // debug
-    if i.W == 0 {
+    if i.W != 1 {
         println( "[debug]: vector with w:0" )
     }
     var o Vec3D
