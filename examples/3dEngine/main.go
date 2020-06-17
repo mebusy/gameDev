@@ -85,7 +85,7 @@ func (self *MyView) Update(t, dt float64) {
     matRotZ := m3d.NewRotZMat( fTheta )
     matRotX := m3d.NewRotXMat( fTheta * 0.5 )
 
-    matTrans := m3d.NewTransMat( 6,0, 3 )
+    matTrans := m3d.NewTransMat( 0,0, 3 )
     matWorld := m3d.NewIdentityMat()
     matWorld = m3d.MultiplyMatrixMatrix( matRotX , matRotZ )
     matWorld = m3d.MultiplyMatrixMatrix( matTrans , matWorld )
