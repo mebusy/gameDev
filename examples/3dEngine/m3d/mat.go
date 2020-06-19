@@ -60,6 +60,7 @@ func NewIdentityMat() Mat {
 }
 
 // https://butterflyofdream.wordpress.com/2016/07/05/converting-rotation-matrices-of-left-handed-coordinate-system/
+// https://en.wikipedia.org/wiki/Rotation_matrix    , right-hand, column based
 // lefthand 
 func NewRotXMat( rad float64 ) Mat {
     var m Mat
