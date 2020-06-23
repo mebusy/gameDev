@@ -51,6 +51,19 @@ func (self *Vec3D) Div( k float64 ) Vec3D {
     return Vec3D{self.X/k, self.Y/k, self.Z/k, 1 }
 }
 
+// plane_p: a point on the plane
+// plane_p: the normal to the plane
+// 
+func IntersectPlane( plane_p, plane_n Vec3D, lineStart , lineEnd Vec3D  ) Vec3D {
+    plane_n = plane_n.Normalize()
+    plane_d := -plane_n.Dot( plane_p)
+    ad := lineStart.Dot(plane_n)
+    bd := lineEnd.Dot(plane_n)
+    t := (-plane_d - ad) / (bd - ad)
+    lineStartToEnd := lineEnd.Sub(lineStart)
+    lineToIntersect := lineStartToEnd.Mul(t)
+    return lineStart.Add(lineToIntersect)
+}
 
 
 
