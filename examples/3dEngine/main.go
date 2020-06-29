@@ -31,7 +31,7 @@ func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
 
     meshCube.LoadFromObj( "axis.obj"  )
-    //*
+    /*
     meshCube.Tris = []m3d.Triangle {
         // SOUTH face . FRONT
         m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0,1},    {0.0, 1.0, 0.0,1},    {1.0, 1.0, 0.0,1} },1} ,
@@ -54,8 +54,9 @@ func (self *MyView) Enter() {
     }
     //*/
 
-    fZNear := 0.1
-    fZFar := 1000.0
+    // negate to convert right-handed to left-handed 
+    fZNear := -0.1
+    fZFar := -1000.0
     fFov := 90.0 // degree
     fAspectRatio := float64(screenH)/float64(screenW)
 
