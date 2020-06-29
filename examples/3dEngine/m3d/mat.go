@@ -101,6 +101,7 @@ func NewTransMat( x,y,z float64 ) Mat {
     return m
 }
 
+const right2left float64 = -1
 func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
     fFovRad := 1/math.Tan(  fovDegree*0.5 /180 *math.Pi  )
 
@@ -108,9 +109,9 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
     m.Clear()
     m.Set(0,0, fAspectRatio * fFovRad )
     m.Set(1,1, fFovRad)
-    m.Set(2,2, fZFar / (fZFar-fZNear))
-    m.Set(2,3,-fZNear * fZFar / (fZFar-fZNear))
-    m.Set(3,2, 1)
+    m.Set(2,2, right2left * fZFar / (fZFar-fZNear))
+    m.Set(2,3, right2left * -fZNear * fZFar / (fZFar-fZNear))
+    m.Set(3,2, right2left * 1)
     m.Set(3,3, 0)
     return m
 }

@@ -30,8 +30,8 @@ var test_pts [6]int
 func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
 
-    meshCube.LoadFromObj( "axis2.obj"  )
-    /*
+    meshCube.LoadFromObj( "axis.obj"  )
+    //*
     meshCube.Tris = []m3d.Triangle {
         // SOUTH face . FRONT
         m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0,1},    {0.0, 1.0, 0.0,1},    {1.0, 1.0, 0.0,1} },1} ,
@@ -114,7 +114,7 @@ func (self *MyView) Update(t, dt float64) {
     /*/
     vUp := m3d.Vec3D{ 0,1,0,1 }
     vTarget := m3d.Vec3D{ 0,0,1,1 }
-    matCameraRot := m3d.NewRotYMat( -fYaw )
+    matCameraRot := m3d.NewRotYMat( fYaw )
     vLookDir = m3d.MultiplyMatrixVector( matCameraRot , vTarget )
     // log.Println(vLookDir)
     vTarget = vCamera.Add( vLookDir )
@@ -172,7 +172,7 @@ func (self *MyView) Update(t, dt float64) {
             // 1. shift a coordinate to between [0,1]
             // 2. scale it to the appropriate size
             x2d := (triProj.P[i].X + 1) * 0.5 * float64(screenW)
-            y2d := (-triProj.P[i].Y + 1) * 0.5 * float64(screenH)
+            y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
             tri2D.SetVert(i, int( x2d  ), int( y2d ) )
         }
 
