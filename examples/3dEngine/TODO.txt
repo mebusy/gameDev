@@ -1,0 +1,13 @@
+-    m.Set(2,2, fZFar / (fZFar-fZNear))
+-    m.Set(2,3, -fZNear * fZFar / (fZFar-fZNear))
++    m.Set(2,2, -fZFar / (fZFar-fZNear))
++    m.Set(2,3,  fZNear * fZFar / (fZFar-fZNear))
+
+-    fZNear := -0.1
++    fZNear := -2.0
+
+-    matTrans := m3d.NewTransMat( 0,0, 5 )
++    matTrans := m3d.NewTransMat( 0,0, -5 )
+
+-    vTarget := m3d.Vec3D{ 0,0,1,1 }
++    vTarget := m3d.Vec3D{ 0,0,-1,1 }
