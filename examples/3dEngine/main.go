@@ -31,7 +31,7 @@ func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
 
     meshCube.LoadFromObj( "axis.obj"  )
-    //*
+    /*
     meshCube.Tris = []m3d.Triangle {
         // SOUTH face . FRONT
         m3d.Triangle{ [3]m3d.Vec3D{{0.0, 0.0, 0.0,1},    {0.0, 0.5, 0.0,1},    {1.0, 1.0, 0.0,1} },1} ,
