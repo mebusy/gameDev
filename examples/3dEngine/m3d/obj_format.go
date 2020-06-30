@@ -38,6 +38,8 @@ func (self *Mesh) LoadFromObj( filename string ) {
             fmt.Sscanf( line[1:], "%d %d %d", &f[0], &f[1], &f[2] )
             // log.Println( cnt, f[0], f[1], f[2], verts[f[0]-1] )
             // vertex index starts from 1
+            // create face by vertex directly.
+            // it is not a memory efficient solution because it drop the benifit from Indexed Face Sets.
             faces = append(faces,
                 Triangle{ [3]Vec3D{verts[f[0]-1], verts[f[1]-1],verts[f[2]-1]}, 0 } )
         }
