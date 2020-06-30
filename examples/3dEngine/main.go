@@ -55,14 +55,14 @@ func (self *MyView) Enter() {
     //*/
 
     // negate to convert right-handed to left-handed 
-    fZNear := -0.1
+    fZNear := -2.0
     fZFar := -1000.0
     fFov := 90.0 // degree
     fAspectRatio := float64(screenH)/float64(screenW)
 
     matProj  = m3d.NewProjectionMat( fFov, fAspectRatio, fZNear, fZFar  )
 
-    for _, vec := range (   []m3d.Vec3D{ {1,1,8,1}, {1,1,7,1}, {1,1,0.2,1}, {1,1,1000,1} } ) {
+    for _, vec := range (   []m3d.Vec3D{ {1,1,-2,1}, {1,1,-1000,1}, {1,1,2,1}, {1,1,1000,1} } ) {
         log.Printf( "project %v -> %v" , vec , m3d.MultiplyMatrixVector( matProj, vec )  )
     }
 
