@@ -165,12 +165,12 @@ func (self *MyView) Update(t, dt float64) {
                 // just test
                 if triProj.P[i].W < 0 {
                     visible = false
-                    break
+                    // break
                 }
                 triProj.P[i] = triProj.P[i].NormalizeByW()
             }
             if !visible {
-                continue
+                // continue
             }
             triangles2Raster = append( triangles2Raster , triProj )
 
@@ -189,7 +189,7 @@ func (self *MyView) Update(t, dt float64) {
             // 1. shift a coordinate to between [0,1]
             // 2. scale it to the appropriate size
             x2d := (triProj.P[i].X + 1) * 0.5 * float64(screenW)
-            y2d := (triProj.P[i].Y + 1) * 0.5 * float64(screenH)
+            y2d := (-triProj.P[i].Y + 1) * 0.5 * float64(screenH)
             tri2D.SetVert(i, int( x2d  ), int( y2d ) )
         }
 

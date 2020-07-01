@@ -140,6 +140,7 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
 
 func NewPointAtMat ( pos Vec3D, target Vec3D , up Vec3D ) Mat {
     newForward := target.Sub( pos ).Normalize()
+    newForward.Z *= -1
 
     a := newForward.Mul(  up.Dot( newForward )  )
     newUp := up.Sub(a).Normalize()
