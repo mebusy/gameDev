@@ -2,7 +2,7 @@ package m3d
 
 import (
     "math"
-    // "log"
+    "log"
 )
 
 func MultiplyMatrixVector( m Mat, i Vec3D ) Vec3D {
@@ -102,16 +102,39 @@ func NewTransMat( x,y,z float64 ) Mat {
 }
 
 func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
-    fFovRad := 1/math.Tan(  fovDegree*0.5 /180 *math.Pi  )
 
     var m Mat
     m.Clear()
+    /*
+    fFovRad := 1/math.Tan(  fovDegree*0.5 /180 *math.Pi  )
     m.Set(0,0, fAspectRatio * fFovRad )
     m.Set(1,1, fFovRad)
     m.Set(2,2, fZFar / (fZFar-fZNear))
     m.Set(2,3, -fZNear * fZFar / (fZFar-fZNear))
     m.Set(3,2, -1)  // negate to convert right-handed to left-handed
     m.Set(3,3, 0)
+    /*/
+    // for OpenGL sytle
+    f := math.Abs( fZFar )
+    n := math.Abs( fZNear )
+
+    l := -n * math.Tan(  fovDegree*0.5 /180 *math.Pi  )   // -
+    r := -l
+    t := fAspectRatio * r
+    b := -t  // -
+
+    m.Set(0,0, 2*n/(r-l) ) ; m.Set(0,2, (r+l)/(r-l) )
+    m.Set(1,1, 2*n/(t-b) ) ; m.Set(1,2, (t+b)/(t-b) )
+    m.Set(2,2, -(f+n)/(f-n) )  ; m.Set(2,3, -(2*f*n)/(f-n) )
+    m.Set(3,2, -1)
+    m.Set(3,3, 0)
+
+    // debug
+    log.Println( "projection matrix test, f,n", f,n, ",l,r,t,b: ", l,r,t,b )
+    for _, vec := range (   []Vec3D{ {l,b,-2,1}, {r,t,-1000,1}, {r,t,2,1}, {l,t,1000,1} } ) {
+        log.Printf( "project %v -> %v" , vec , MultiplyMatrixVector( m, vec )  )
+    }
+    //*/
     return m
 }
 
@@ -121,7 +144,8 @@ func NewPointAtMat ( pos Vec3D, target Vec3D , up Vec3D ) Mat {
     a := newForward.Mul(  up.Dot( newForward )  )
     newUp := up.Sub(a).Normalize()
 
-    newRight := newUp.Cross(  newForward ).Normalize()
+    newRight := newUp.Cross(  newForward ).Normalize()  // right-handed?
+    // newRight := newForward.Cross(  newUp ).Normalize()
 
     // log.Println( newForward, newUp, newRight )
 

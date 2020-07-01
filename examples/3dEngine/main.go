@@ -30,7 +30,7 @@ var test_pts [6]int
 func (self *MyView) Enter() {
     rand.Seed( time.Now().Unix() )
 
-    meshCube.LoadFromObj( "axis.obj"  )
+    meshCube.LoadFromObj( "axis2.obj"  )
     /*
     meshCube.Tris = []m3d.Triangle {
         // SOUTH face . FRONT
@@ -54,9 +54,10 @@ func (self *MyView) Enter() {
     }
     //*/
 
-    // negate to convert right-handed to left-handed 
-    fZNear := -2.0
-    fZFar := -1000.0
+    // for OpenGL style, glFrustum accept only positive value of near and far
+    // we need to negate them during the construction of GL_PROJECTION matrix
+    fZNear := 2.0
+    fZFar := 1000.0
     fFov := 90.0 // degree
     fAspectRatio := float64(screenH)/float64(screenW)
 
@@ -103,7 +104,7 @@ func (self *MyView) Update(t, dt float64) {
     matRotZ := m3d.NewRotZMat( fTheta )
     matRotX := m3d.NewRotXMat( fTheta * 0.5 )
 
-    matTrans := m3d.NewTransMat( 0,0, 5 )
+    matTrans := m3d.NewTransMat( 0,0, -5 )
     matWorld := m3d.NewIdentityMat()
     matWorld = m3d.MultiplyMatrixMatrix( matRotX , matRotZ )
     matWorld = m3d.MultiplyMatrixMatrix( matTrans , matWorld )
@@ -114,7 +115,8 @@ func (self *MyView) Update(t, dt float64) {
     vTarget := vCamera.Add(vLookDir)
     /*/
     vUp := m3d.Vec3D{ 0,1,0,1 }
-    vTarget := m3d.Vec3D{ 0,0,1,1 }
+    // for OpenGL style, camera is looking at -Z 
+    vTarget := m3d.Vec3D{ 0,0,-1,1 }
     matCameraRot := m3d.NewRotYMat( fYaw )
     vLookDir = m3d.MultiplyMatrixVector( matCameraRot , vTarget )
     // log.Println(vLookDir)
@@ -123,6 +125,10 @@ func (self *MyView) Update(t, dt float64) {
 
     matCamera := m3d.NewPointAtMat( vCamera, vTarget, vUp  )
     matView := m3d.QuickInverse( matCamera )
+    // log.Printf( "matCamera:%+v", matCamera  )
+    // log.Printf( "matView:%+v", matView  )
+    // debug
+    // matView = m3d.NewIdentityMat()
 
     triangles2Raster := make( []m3d.Triangle, 0 )
 
@@ -152,9 +158,19 @@ func (self *MyView) Update(t, dt float64) {
 
             var triProj m3d.Triangle
             triProj.Color = dp
+            visible := true
             for i:=0;i<3;i++ {
                 // projection
-                triProj.P[i] = m3d.MultiplyMatrixVector( matProj, triViewed.P[i] ).NormalizeByW()
+                triProj.P[i] = m3d.MultiplyMatrixVector( matProj, triViewed.P[i] ) //.NormalizeByW()
+                // just test
+                if triProj.P[i].W < 0 {
+                    visible = false
+                    break
+                }
+                triProj.P[i] = triProj.P[i].NormalizeByW()
+            }
+            if !visible {
+                continue
             }
             triangles2Raster = append( triangles2Raster , triProj )
 
