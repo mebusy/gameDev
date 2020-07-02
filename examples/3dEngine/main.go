@@ -58,7 +58,7 @@ func (self *MyView) Enter() {
     // we need to negate them during the construction of GL_PROJECTION matrix
     fZNear := 2.0
     fZFar := 1000.0
-    fFov := 75.0 // degree
+    fFov := 60.0 // degree
     fAspectRatio := float64(screenW)/float64(screenH)
 
     matProj  = m3d.NewProjectionMat( fFov, fAspectRatio, fZNear, fZFar  )
@@ -67,6 +67,15 @@ func (self *MyView) Enter() {
         log.Printf( "project %v -> %v" , vec , m3d.MultiplyMatrixVector( matProj, vec )  )
     }
 
+    // viewer matrix test
+    mat_viewer := m3d.QuickInverse(m3d.NewCameraMat( m3d.Vec3D{ 1,2,3,1 } , m3d.Vec3D{ 4,3,4,1 }  , m3d.Vec3D{ 0,1,0,1 }   ))
+    log.Printf( "test viewer: %+v " , mat_viewer    )
+
+    log.Printf( "view*[11,2,6,1]= %+v", m3d.MultiplyMatrixVector( mat_viewer , m3d.Vec3D{ 11,2,6,1 }  )  )
+    var ma, mb m3d.Mat
+    ma.M = [16]float64{  1,0,0,0, 2,1,0,0, 3,4,5,6, 0,1,0,1 }
+    mb.M = [16]float64{  1,2,3,4, 1,1,0,0, 7,6,5,6, 1,1,0,1 }
+    log.Printf( "ma*mb, sould be 14 18 15 22 ... 3 2 0 1 %+v " , m3d.MultiplyMatrixMatrix( ma,mb )  )
 }
 func (self *MyView) Exit() {}
 func (self *MyView) Update(t, dt float64) {
@@ -123,7 +132,7 @@ func (self *MyView) Update(t, dt float64) {
     vTarget = vCamera.Add( vLookDir )
     //*/
 
-    matCamera := m3d.NewPointAtMat( vCamera, vTarget, vUp  )
+    matCamera := m3d.NewCameraMat( vCamera, vTarget, vUp  )
     matView := m3d.QuickInverse( matCamera )
     // log.Printf( "matCamera:%+v", matCamera  )
     // log.Printf( "matView:%+v", matView  )

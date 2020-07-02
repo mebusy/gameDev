@@ -8,13 +8,13 @@ import (
 func MultiplyMatrixVector( m Mat, i Vec3D ) Vec3D {
     // debug
     if i.W != 1 {
-        println( "[debug]: vector with w:0" )
+        println( "[debug]: vector with w:", i.W )
     }
     var o Vec3D
-    o.X = i.X*m.M[(0<<2)+0]+i.Y*m.M[(0<<2)+1]+i.Z*m.M[(0<<2)+2]+i.W*m.M[(0<<2)+3]
-    o.Y = i.X*m.M[(1<<2)+0]+i.Y*m.M[(1<<2)+1]+i.Z*m.M[(1<<2)+2]+i.W*m.M[(1<<2)+3]
-    o.Z = i.X*m.M[(2<<2)+0]+i.Y*m.M[(2<<2)+1]+i.Z*m.M[(2<<2)+2]+i.W*m.M[(2<<2)+3]
-    o.W = i.X*m.M[(3<<2)+0]+i.Y*m.M[(3<<2)+1]+i.Z*m.M[(3<<2)+2]+i.W*m.M[(3<<2)+3]
+    o.X = i.X*m.M[(0<<2)+0]+i.Y*m.M[(1<<2)+0]+i.Z*m.M[(2<<2)+0]+i.W*m.M[(3<<2)+0]
+    o.Y = i.X*m.M[(0<<2)+1]+i.Y*m.M[(1<<2)+1]+i.Z*m.M[(2<<2)+1]+i.W*m.M[(3<<2)+1]
+    o.Z = i.X*m.M[(0<<2)+2]+i.Y*m.M[(1<<2)+2]+i.Z*m.M[(2<<2)+2]+i.W*m.M[(3<<2)+2]
+    o.W = i.X*m.M[(0<<2)+3]+i.Y*m.M[(1<<2)+3]+i.Z*m.M[(2<<2)+3]+i.W*m.M[(3<<2)+3]
 
     /*
     // if w == 0, this point makes no sense
@@ -31,24 +31,26 @@ func MultiplyMatrixVector( m Mat, i Vec3D ) Vec3D {
 func MultiplyMatrixMatrix( m1 Mat, m2 Mat ) Mat {
     var m Mat
     dest := &m.M  // use tmp variable for performance
-    src1 := m1.M
-    src2 := m2.M
-    dest[(0<<2)+0] = src1[(0<<2)+0] * src2[(0<<2)+0] + src1[(0<<2)+1] * src2[(1<<2)+0] + src1[(0<<2)+2] * src2[(2<<2)+0] + src1[(0<<2)+3] * src2[(3<<2)+0] 
-    dest[(0<<2)+1] = src1[(0<<2)+0] * src2[(0<<2)+1] + src1[(0<<2)+1] * src2[(1<<2)+1] + src1[(0<<2)+2] * src2[(2<<2)+1] + src1[(0<<2)+3] * src2[(3<<2)+1] 
-    dest[(0<<2)+2] = src1[(0<<2)+0] * src2[(0<<2)+2] + src1[(0<<2)+1] * src2[(1<<2)+2] + src1[(0<<2)+2] * src2[(2<<2)+2] + src1[(0<<2)+3] * src2[(3<<2)+2] 
-    dest[(0<<2)+3] = src1[(0<<2)+0] * src2[(0<<2)+3] + src1[(0<<2)+1] * src2[(1<<2)+3] + src1[(0<<2)+2] * src2[(2<<2)+3] + src1[(0<<2)+3] * src2[(3<<2)+3] 
-    dest[(1<<2)+0] = src1[(1<<2)+0] * src2[(0<<2)+0] + src1[(1<<2)+1] * src2[(1<<2)+0] + src1[(1<<2)+2] * src2[(2<<2)+0] + src1[(1<<2)+3] * src2[(3<<2)+0] 
-    dest[(1<<2)+1] = src1[(1<<2)+0] * src2[(0<<2)+1] + src1[(1<<2)+1] * src2[(1<<2)+1] + src1[(1<<2)+2] * src2[(2<<2)+1] + src1[(1<<2)+3] * src2[(3<<2)+1] 
-    dest[(1<<2)+2] = src1[(1<<2)+0] * src2[(0<<2)+2] + src1[(1<<2)+1] * src2[(1<<2)+2] + src1[(1<<2)+2] * src2[(2<<2)+2] + src1[(1<<2)+3] * src2[(3<<2)+2] 
-    dest[(1<<2)+3] = src1[(1<<2)+0] * src2[(0<<2)+3] + src1[(1<<2)+1] * src2[(1<<2)+3] + src1[(1<<2)+2] * src2[(2<<2)+3] + src1[(1<<2)+3] * src2[(3<<2)+3] 
-    dest[(2<<2)+0] = src1[(2<<2)+0] * src2[(0<<2)+0] + src1[(2<<2)+1] * src2[(1<<2)+0] + src1[(2<<2)+2] * src2[(2<<2)+0] + src1[(2<<2)+3] * src2[(3<<2)+0] 
-    dest[(2<<2)+1] = src1[(2<<2)+0] * src2[(0<<2)+1] + src1[(2<<2)+1] * src2[(1<<2)+1] + src1[(2<<2)+2] * src2[(2<<2)+1] + src1[(2<<2)+3] * src2[(3<<2)+1] 
-    dest[(2<<2)+2] = src1[(2<<2)+0] * src2[(0<<2)+2] + src1[(2<<2)+1] * src2[(1<<2)+2] + src1[(2<<2)+2] * src2[(2<<2)+2] + src1[(2<<2)+3] * src2[(3<<2)+2] 
-    dest[(2<<2)+3] = src1[(2<<2)+0] * src2[(0<<2)+3] + src1[(2<<2)+1] * src2[(1<<2)+3] + src1[(2<<2)+2] * src2[(2<<2)+3] + src1[(2<<2)+3] * src2[(3<<2)+3] 
-    dest[(3<<2)+0] = src1[(3<<2)+0] * src2[(0<<2)+0] + src1[(3<<2)+1] * src2[(1<<2)+0] + src1[(3<<2)+2] * src2[(2<<2)+0] + src1[(3<<2)+3] * src2[(3<<2)+0] 
-    dest[(3<<2)+1] = src1[(3<<2)+0] * src2[(0<<2)+1] + src1[(3<<2)+1] * src2[(1<<2)+1] + src1[(3<<2)+2] * src2[(2<<2)+1] + src1[(3<<2)+3] * src2[(3<<2)+1] 
-    dest[(3<<2)+2] = src1[(3<<2)+0] * src2[(0<<2)+2] + src1[(3<<2)+1] * src2[(1<<2)+2] + src1[(3<<2)+2] * src2[(2<<2)+2] + src1[(3<<2)+3] * src2[(3<<2)+2] 
-    dest[(3<<2)+3] = src1[(3<<2)+0] * src2[(0<<2)+3] + src1[(3<<2)+1] * src2[(1<<2)+3] + src1[(3<<2)+2] * src2[(2<<2)+3] + src1[(3<<2)+3] * src2[(3<<2)+3] 
+    src_row := m1.M
+    src_col := m2.M
+    // col 0
+    dest[(0<<2)+0] = src_col[(0<<2)+0] * src_row[(0<<2)+0] + src_col[(0<<2)+1] * src_row[(1<<2)+0] + src_col[(0<<2)+2] * src_row[(2<<2)+0] + src_col[(0<<2)+3] * src_row[(3<<2)+0] 
+    dest[(0<<2)+1] = src_col[(0<<2)+0] * src_row[(0<<2)+1] + src_col[(0<<2)+1] * src_row[(1<<2)+1] + src_col[(0<<2)+2] * src_row[(2<<2)+1] + src_col[(0<<2)+3] * src_row[(3<<2)+1] 
+    dest[(0<<2)+2] = src_col[(0<<2)+0] * src_row[(0<<2)+2] + src_col[(0<<2)+1] * src_row[(1<<2)+2] + src_col[(0<<2)+2] * src_row[(2<<2)+2] + src_col[(0<<2)+3] * src_row[(3<<2)+2] 
+    dest[(0<<2)+3] = src_col[(0<<2)+0] * src_row[(0<<2)+3] + src_col[(0<<2)+1] * src_row[(1<<2)+3] + src_col[(0<<2)+2] * src_row[(2<<2)+3] + src_col[(0<<2)+3] * src_row[(3<<2)+3] 
+    // col 1
+    dest[(1<<2)+0] = src_col[(1<<2)+0] * src_row[(0<<2)+0] + src_col[(1<<2)+1] * src_row[(1<<2)+0] + src_col[(1<<2)+2] * src_row[(2<<2)+0] + src_col[(1<<2)+3] * src_row[(3<<2)+0] 
+    dest[(1<<2)+1] = src_col[(1<<2)+0] * src_row[(0<<2)+1] + src_col[(1<<2)+1] * src_row[(1<<2)+1] + src_col[(1<<2)+2] * src_row[(2<<2)+1] + src_col[(1<<2)+3] * src_row[(3<<2)+1] 
+    dest[(1<<2)+2] = src_col[(1<<2)+0] * src_row[(0<<2)+2] + src_col[(1<<2)+1] * src_row[(1<<2)+2] + src_col[(1<<2)+2] * src_row[(2<<2)+2] + src_col[(1<<2)+3] * src_row[(3<<2)+2] 
+    dest[(1<<2)+3] = src_col[(1<<2)+0] * src_row[(0<<2)+3] + src_col[(1<<2)+1] * src_row[(1<<2)+3] + src_col[(1<<2)+2] * src_row[(2<<2)+3] + src_col[(1<<2)+3] * src_row[(3<<2)+3] 
+    dest[(2<<2)+0] = src_col[(2<<2)+0] * src_row[(0<<2)+0] + src_col[(2<<2)+1] * src_row[(1<<2)+0] + src_col[(2<<2)+2] * src_row[(2<<2)+0] + src_col[(2<<2)+3] * src_row[(3<<2)+0] 
+    dest[(2<<2)+1] = src_col[(2<<2)+0] * src_row[(0<<2)+1] + src_col[(2<<2)+1] * src_row[(1<<2)+1] + src_col[(2<<2)+2] * src_row[(2<<2)+1] + src_col[(2<<2)+3] * src_row[(3<<2)+1] 
+    dest[(2<<2)+2] = src_col[(2<<2)+0] * src_row[(0<<2)+2] + src_col[(2<<2)+1] * src_row[(1<<2)+2] + src_col[(2<<2)+2] * src_row[(2<<2)+2] + src_col[(2<<2)+3] * src_row[(3<<2)+2] 
+    dest[(2<<2)+3] = src_col[(2<<2)+0] * src_row[(0<<2)+3] + src_col[(2<<2)+1] * src_row[(1<<2)+3] + src_col[(2<<2)+2] * src_row[(2<<2)+3] + src_col[(2<<2)+3] * src_row[(3<<2)+3] 
+    dest[(3<<2)+0] = src_col[(3<<2)+0] * src_row[(0<<2)+0] + src_col[(3<<2)+1] * src_row[(1<<2)+0] + src_col[(3<<2)+2] * src_row[(2<<2)+0] + src_col[(3<<2)+3] * src_row[(3<<2)+0] 
+    dest[(3<<2)+1] = src_col[(3<<2)+0] * src_row[(0<<2)+1] + src_col[(3<<2)+1] * src_row[(1<<2)+1] + src_col[(3<<2)+2] * src_row[(2<<2)+1] + src_col[(3<<2)+3] * src_row[(3<<2)+1] 
+    dest[(3<<2)+2] = src_col[(3<<2)+0] * src_row[(0<<2)+2] + src_col[(3<<2)+1] * src_row[(1<<2)+2] + src_col[(3<<2)+2] * src_row[(2<<2)+2] + src_col[(3<<2)+3] * src_row[(3<<2)+2] 
+    dest[(3<<2)+3] = src_col[(3<<2)+0] * src_row[(0<<2)+3] + src_col[(3<<2)+1] * src_row[(1<<2)+3] + src_col[(3<<2)+2] * src_row[(2<<2)+3] + src_col[(3<<2)+3] * src_row[(3<<2)+3] 
     return m
 }
 
@@ -140,17 +142,18 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
 }
 
 // GluLookAt source:  https://www.khronos.org/opengl/wiki/GluLookAt_code
-func NewPointAtMat ( pos Vec3D, target Vec3D , up Vec3D ) Mat {
+func NewCameraMat ( pos Vec3D, target Vec3D , up Vec3D ) Mat {
     newForward := target.Sub( pos ).Normalize()
     // camera, forward is mapped to -Z
     newForward.X *= -1
     newForward.Y *= -1
     newForward.Z *= -1
 
-    a := newForward.Mul(  up.Dot( newForward )  )
-    newUp := up.Sub(a).Normalize()
+    // side = normalize(np.cross( upVector3D, forward ))
+    newRight := up.Cross(  newForward ).Normalize()  // right-handed?
+    // up = np.cross( forward, side )
+    newUp := newForward.Cross( newRight ).Normalize()
 
-    newRight := newUp.Cross(  newForward ).Normalize()  // right-handed?
     // newRight := newForward.Cross(  newUp ).Normalize()
 
     // log.Println( newForward, newUp, newRight )
@@ -201,10 +204,10 @@ func (self *Mat) LoadIdentity() {
     copy( self.M[:], s16identity )
 }
 func (self *Mat) Set( row, col int , val float64) {
-    self.M[ (row<<2) + col ] = val
+    self.M[ (col<<2) + row ] = val
 }
 func (self *Mat) At( row, col int ) float64 {
-    return self.M[ (row<<2) + col ]
+    return self.M[ (col<<2) + row ]
 }
 
 
