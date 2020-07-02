@@ -106,6 +106,7 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
     var m Mat
     m.Clear()
     /*
+    // note , those code is incorrect, since fov and aspectratio inverse
     fFovRad := 1/math.Tan(  fovDegree*0.5 /180 *math.Pi  )
     m.Set(0,0, fAspectRatio * fFovRad )
     m.Set(1,1, fFovRad)
@@ -118,10 +119,10 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
     f := math.Abs( fZFar )
     n := math.Abs( fZNear )
 
-    l := -n * math.Tan(  fovDegree*0.5 /180 *math.Pi  )   // -
-    r := -l
-    t := fAspectRatio * r
+    t := n * math.Tan(  fovDegree*0.5 /180 *math.Pi  )// 
     b := -t  // -
+    l := -fAspectRatio * t   // -
+    r := -l
 
     m.Set(0,0, 2*n/(r-l) ) ; m.Set(0,2, (r+l)/(r-l) )
     m.Set(1,1, 2*n/(t-b) ) ; m.Set(1,2, (t+b)/(t-b) )

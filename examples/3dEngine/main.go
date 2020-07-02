@@ -58,8 +58,8 @@ func (self *MyView) Enter() {
     // we need to negate them during the construction of GL_PROJECTION matrix
     fZNear := 2.0
     fZFar := 1000.0
-    fFov := 90.0 // degree
-    fAspectRatio := float64(screenH)/float64(screenW)
+    fFov := 75.0 // degree
+    fAspectRatio := float64(screenW)/float64(screenH)
 
     matProj  = m3d.NewProjectionMat( fFov, fAspectRatio, fZNear, fZFar  )
 
