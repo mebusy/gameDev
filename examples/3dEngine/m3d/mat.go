@@ -138,8 +138,12 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
     return m
 }
 
+// GluLookAt source:  https://www.khronos.org/opengl/wiki/GluLookAt_code
 func NewPointAtMat ( pos Vec3D, target Vec3D , up Vec3D ) Mat {
     newForward := target.Sub( pos ).Normalize()
+    // camera, forward is mapped to -Z
+    newForward.X *= -1
+    newForward.Y *= -1
     newForward.Z *= -1
 
     a := newForward.Mul(  up.Dot( newForward )  )
