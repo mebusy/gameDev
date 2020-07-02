@@ -107,15 +107,17 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
 
     var m Mat
     m.Clear()
-    /*
+    //*
     // note , those code is incorrect, since fov and aspectratio inverse
     fFovRad := 1/math.Tan(  fovDegree*0.5 /180 *math.Pi  )
-    m.Set(0,0, fAspectRatio * fFovRad )
+    m.Set(0,0, fFovRad / fAspectRatio  )
     m.Set(1,1, fFovRad)
-    m.Set(2,2, fZFar / (fZFar-fZNear))
-    m.Set(2,3, -fZNear * fZFar / (fZFar-fZNear))
+    m.Set(2,2, -(fZFar+fZNear) / (fZFar-fZNear))
+    m.Set(2,3, -2 * fZNear * fZFar / (fZFar-fZNear))
     m.Set(3,2, -1)  // negate to convert right-handed to left-handed
     m.Set(3,3, 0)
+
+    log.Printf( "perspect matrix test, fov:%f,aratio:%f, near:%f,far:%f, %+v", fovDegree, fAspectRatio, fZNear,fZFar, m )
     /*/
     // for OpenGL sytle
     f := math.Abs( fZFar )
@@ -133,10 +135,7 @@ func NewProjectionMat( fovDegree, fAspectRatio, fZNear, fZFar float64 ) Mat {
     m.Set(3,3, 0)
 
     // debug
-    log.Println( "projection matrix test, f,n", f,n, ",l,r,t,b: ", l,r,t,b )
-    for _, vec := range (   []Vec3D{ {l,b,-2,1}, {r,t,-1000,1}, {r,t,2,1}, {l,t,1000,1} } ) {
-        log.Printf( "project %v -> %v" , vec , MultiplyMatrixVector( m, vec )  )
-    }
+    log.Printf( "perspect matrix test, fov:%f,aratio:%f, near:%f,far:%f, %+v", fovDegree, fAspectRatio, fZNear,fZFar, m )
     //*/
     return m
 }

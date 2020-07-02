@@ -56,7 +56,7 @@ func (self *MyView) Enter() {
 
     // for OpenGL style, glFrustum accept only positive value of near and far
     // we need to negate them during the construction of GL_PROJECTION matrix
-    fZNear := 2.0
+    fZNear := 5.0
     fZFar := 1000.0
     fFov := 60.0 // degree
     fAspectRatio := float64(screenW)/float64(screenH)
